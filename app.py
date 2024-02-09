@@ -4,9 +4,10 @@ pygame.init()
 # Cores
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
+COR_PERSONAGEM = (30, 200, 20)
 
 # Tamanho da tela e definição do FPS
-SCREEN_WIDTH, SCREEN_HEIGHT = 800, 600
+SCREEN_WIDTH, SCREEN_HEIGHT = 800, 800
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 clock = pygame.time.Clock()
 FPS = 60  # Frames por Segundo
@@ -15,24 +16,53 @@ canhao = Canhao()
 bolas = pygame.sprite.Group()
 passaro = Passaro()
 running = True
+
+# Inicializar posicoes
+s0 = np.array([50,500])
+# v0 = np.array([10, -10])
+# a = np.array([0, 0.2])
+#Modificado
+v0 = np.array([16, -10])
+a = np.array([0, 0.2])
+v = v0
+s = s0
+clicou = False
+movimento = False
+# Personagem
+personagem = pygame.Surface((5, 5))  # Tamanho do personagem
+personagem.fill(COR_PERSONAGEM)  # Cor do personagem
+rodando = True
+
+
 while running:
     screen.fill(BLACK)
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            running = False
-
-        elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  # Verifica se ocorreu um clique do mouse esquerdo
-            # Obtém a posição do mouse
-                mouse_pos = pygame.mouse.get_pos()
-                print("Posição do mouse:", mouse_pos)
-                bola = Bola(canhao.rect.center)  # Cria uma nova bola na posição do canhão
-                bolas.add(bola)  # Adiciona a bola à lista de bolas
-
+            rodando = False
         elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_ESCAPE:  # Se a tecla pressionada for o "Escape"
-                running = False
+            if event.key == pygame.K_SPACE:
+                movimento = True
 
+    mouse_presses = pygame.mouse.get_pressed()
+    if mouse_presses[0]:
+        pos = pygame.mouse.get_pos()
+        if pos[0] > 600 and pos[0] < 640 and pos[1]>600 and pos[1]<640:
+            clicou = True
+
+    if s[0]<10 or s[0]>780 or s[1]<10 or s[1]>780: # Se eu chegar ao limite da tela, reinicio a posição do personagem
+        y = pygame.mouse.get_pos()
+        mod = np.linalg.norm(y-s0)
+        movimento = False
+        x = 1/mod
+        if clicou:
+            y = (y-s0)*x*40
+        else:
+            y = (y-s0)*x*20
+        
+        s, v = s0, y 
+
+    screen.fill(BLACK)
     canhao.draw()
     passaro.draw()
 
@@ -40,8 +70,33 @@ while running:
         bola.update()
         screen.blit(bola.image, bola.rect)
 
-    pygame.display.flip()  # Atualiza a tela
+    # pygame.display.flip()  # Atualiza a tela
     clock.tick(FPS)  # Limita o FPS
+
+    if movimento:
+        v = v + a
+        s = s + 0.13 * v
+
+   
+
+    # Desenhar personagem
+    rect = pygame.Rect(s, (10, 10))  # First tuple is position, second is size.
+    screen.blit(personagem, rect)
+
+    
+
+    if s[0] < 350 and s[1] < 700:
+        pos = pygame.mouse.get_pos()
+        if pos[0] < 500 and pos[1] > 200 and pos[1] < 700:
+            pygame.draw.line(screen, (255,255,255), (50,500), (pos[0], pos[1]))
+
+    if clicou:
+        pygame.draw.polygon(screen, (255,0,0), [(600, 600), (640, 600), (640, 640), (600, 640)])
+    else: 
+        pygame.draw.polygon(screen, (0,255,0), [(600, 600), (640, 600), (640, 640), (600, 640)])
+    # Update!
+    pygame.display.update()
 
 pygame.quit()  # Finaliza o Pygame
 sys.exit()
+
