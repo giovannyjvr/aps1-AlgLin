@@ -18,7 +18,7 @@ passaro = Passaro()
 running = True
 
 # Inicializar posicoes
-s0 = np.array([50,500])
+s0 = np.array([SCREEN_WIDTH/2,SCREEN_HEIGHT - 50])
 # v0 = np.array([10, -10])
 # a = np.array([0, 0.2])
 #Modificado
@@ -27,12 +27,17 @@ a = np.array([0, 0.2])
 v = v0
 s = s0
 clicou = False
-movimento = False
+atirou = False
 # Personagem
 personagem = pygame.Surface((5, 5))  # Tamanho do personagem
 personagem.fill(COR_PERSONAGEM)  # Cor do personagem
 rodando = True
 
+def criar_bola(bolas):
+    bola = Bola()
+    bola.rect.x = SCREEN_WIDTH/2,  # Posição X inicial da bola
+    bola.rect.y = SCREEN_HEIGHT-100  # Posição Y inicial da bola
+    bolas.add(bola)
 
 while running:
     screen.fill(BLACK)
@@ -42,7 +47,9 @@ while running:
             rodando = False
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
-                movimento = True
+                atirou = True
+                
+
 
     mouse_presses = pygame.mouse.get_pressed()
     if mouse_presses[0]:
@@ -53,18 +60,30 @@ while running:
     if s[0]<10 or s[0]>780 or s[1]<10 or s[1]>780: # Se eu chegar ao limite da tela, reinicio a posição do personagem
         y = pygame.mouse.get_pos()
         mod = np.linalg.norm(y-s0)
-        movimento = False
+        # atirou = False
+        
         x = 1/mod
         if clicou:
             y = (y-s0)*x*40
         else:
             y = (y-s0)*x*20
         
+        
         s, v = s0, y 
+        
 
     screen.fill(BLACK)
     canhao.draw()
     passaro.draw()
+  
+
+
+    # if s[0] < 350 and s[1] < 700:
+    pos = pygame.mouse.get_pos()
+    # if pos[0] < 500 and pos[1] > 200 and pos[1] < 700:
+    pygame.draw.line(screen, (255,255,255), (SCREEN_WIDTH/2,SCREEN_HEIGHT - 50), (pos[0], pos[1]))
+
+    
 
     for bola in bolas:
         bola.update()
@@ -73,10 +92,14 @@ while running:
     # pygame.display.flip()  # Atualiza a tela
     clock.tick(FPS)  # Limita o FPS
 
-    if movimento:
-        v = v + a
-        s = s + 0.13 * v
+    if atirou:
+        # v = v + a
+        s = s + v
+        if s[1] < 0:
+            atirou = False
 
+    
+    
    
 
     # Desenhar personagem
@@ -85,10 +108,7 @@ while running:
 
     
 
-    if s[0] < 350 and s[1] < 700:
-        pos = pygame.mouse.get_pos()
-        if pos[0] < 500 and pos[1] > 200 and pos[1] < 700:
-            pygame.draw.line(screen, (255,255,255), (50,500), (pos[0], pos[1]))
+    
 
     if clicou:
         pygame.draw.polygon(screen, (255,0,0), [(600, 600), (640, 600), (640, 640), (600, 640)])
