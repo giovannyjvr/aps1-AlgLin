@@ -18,7 +18,7 @@ passaro = Passaro()
 running = True
 
 # Inicializar posicoes
-s0 = np.array([SCREEN_WIDTH/2,SCREEN_HEIGHT - 50])
+s0 = np.array([SCREEN_WIDTH/2,SCREEN_HEIGHT - 200])
 # v0 = np.array([10, -10])
 # a = np.array([0, 0.2])
 #Modificado
@@ -39,8 +39,9 @@ def criar_bola(bolas):
     bola.rect.y = SCREEN_HEIGHT-100  # Posição Y inicial da bola
     bolas.add(bola)
 
+
+
 while running:
-    screen.fill(BLACK)
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -62,7 +63,7 @@ while running:
     screen.fill(BLACK)
     canhao.draw()
     passaro.draw()
-  
+
     # if atirou:
     #     # v = v + a
     if atirou:
@@ -80,7 +81,7 @@ while running:
 
     pos = pygame.mouse.get_pos()
     # if pos[0] < 500 and pos[1] > 200 and pos[1] < 700:
-    pygame.draw.line(screen, (255,255,255), (SCREEN_WIDTH/2,SCREEN_HEIGHT - 50), (pos[0], pos[1]))
+    pygame.draw.line(screen, (255,255,255), (SCREEN_WIDTH/2,SCREEN_HEIGHT - 200), (pos[0], pos[1]))
 
     for bola in bolas:
         bola.update()
@@ -99,6 +100,7 @@ while running:
         pygame.draw.polygon(screen, (0,255,0), [(600, 600), (640, 600), (640, 640), (600, 640)])
     # Update!
     pygame.display.update()
+    
 
 pygame.quit()  # Finaliza o Pygame
 sys.exit()
