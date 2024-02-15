@@ -48,6 +48,7 @@ while running:
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
                 atirou = True
+                pos_mouse = pygame.mouse.get_pos()
                 
 
 
@@ -56,34 +57,30 @@ while running:
         pos = pygame.mouse.get_pos()
         if pos[0] > 600 and pos[0] < 640 and pos[1]>600 and pos[1]<640:
             clicou = True
-
-    if s[0]<10 or s[0]>780 or s[1]<10 or s[1]>780: # Se eu chegar ao limite da tela, reinicio a posição do personagem
-        y = pygame.mouse.get_pos()
-        mod = np.linalg.norm(y-s0)
-        # atirou = False
-        
-        x = 1/mod
-        if clicou:
-            y = (y-s0)*x*40
-        else:
-            y = (y-s0)*x*20
-        
-        
-        s, v = s0, y 
         
 
     screen.fill(BLACK)
     canhao.draw()
     passaro.draw()
   
+    # if atirou:
+    #     # v = v + a
+    if atirou:
+        mod = np.linalg.norm(pos_mouse-s0)
+        x = 1/mod
+        if clicou:
+            y = (pos_mouse-s0)*x*40
+        else:
+            y = (pos_mouse-s0)*x*20
+        
+        s, v = s0, y 
+        atirou = False
 
+    s = s + v
 
-    # if s[0] < 350 and s[1] < 700:
     pos = pygame.mouse.get_pos()
     # if pos[0] < 500 and pos[1] > 200 and pos[1] < 700:
     pygame.draw.line(screen, (255,255,255), (SCREEN_WIDTH/2,SCREEN_HEIGHT - 50), (pos[0], pos[1]))
-
-    
 
     for bola in bolas:
         bola.update()
@@ -92,23 +89,9 @@ while running:
     # pygame.display.flip()  # Atualiza a tela
     clock.tick(FPS)  # Limita o FPS
 
-    if atirou:
-        # v = v + a
-        s = s + v
-        if s[1] < 0:
-            atirou = False
-
-    
-    
-   
-
     # Desenhar personagem
     rect = pygame.Rect(s, (10, 10))  # First tuple is position, second is size.
     screen.blit(personagem, rect)
-
-    
-
-    
 
     if clicou:
         pygame.draw.polygon(screen, (255,0,0), [(600, 600), (640, 600), (640, 640), (600, 640)])
