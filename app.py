@@ -99,6 +99,8 @@
 
 from random import randint
 import pygame
+import numpy as np
+import math
 
 
 class Jogo:
@@ -179,6 +181,10 @@ class Jogo:
         self.window.blit(texto_fps,(w - 130,h - 20))
         self.sprites.draw(self.window)
 
+        pos = pygame.mouse.get_pos()
+        pygame.draw.line(self.window, (255,255,255), (self.jogador.rect.x + 70,self.jogador.rect.y + 50), (pos[0], pos[1]))
+        
+
         pygame.display.update()
 
     def recebe_eventos(self):
@@ -206,9 +212,9 @@ class Jogo:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 # som = self.state["som"]
                 # som.play()
-                Tiro(self.sprites, self.meteoros, self.jogador.rect.x, self.jogador.rect.y+25)
-                Tiro(self.sprites, self.meteoros, self.jogador.rect.x+20, self.jogador.rect.y)
-                Tiro(self.sprites, self.meteoros, self.jogador.rect.x+45, self.jogador.rect.y+25)
+                # Tiro(self.sprites, self.meteoros, self.jogador.rect.x, self.jogador.rect.y+25)
+                # Tiro(self.sprites, self.meteoros, self.jogador.rect.x+20, self.jogador.rect.y)
+                Tiro(self.sprites, self.meteoros,self.jogador, self.jogador.rect.x+50, self.jogador.rect.y+50)
 
         
         ultimo_tempo = self.state["last_updated"]
@@ -321,17 +327,33 @@ class Jogador(pygame.sprite.Sprite):
 
 
 class Tiro(pygame.sprite.Sprite):
-    def __init__(self, sprites,meteoros, x, y):
+    def __init__(self, sprites,meteoros,jogador, x, y):
         pygame.sprite.Sprite.__init__(self)
 
         img_laser = pygame.image.load('imagens/bola_de_canhao.png')
         self.image = pygame.transform.scale(img_laser,(16,12))
         
+        #     if flag_atirou:
+#         mod = np.linalg.norm(posicao_mouse-s)
+#         x = 1/mod
+#         if flag_clicou:
+#             nova_v = (posicao_mouse-s)*x*40
+#         else:
+#             nova_v = (posicao_mouse-s)*x*20
+#         s, v = s, nova_v
+#         flag_atirou = False
+
+#     forca = 8000/(math.dist((s[0], s[1]), (220,220))**2)
+#     aceleracao = np.array([0, forca])
+#     s = s + v+aceleracao
+
+        self.initial_v = np.array([16, -10])
+        # self.initial_s = 
         self.rect = self.image.get_rect()
         self.vel_y_laser = 0
-
-        self.rect.x = x
-        self.rect.y = y
+        self.rect = np.array([x, y])
+        # self.rect.x = x
+        # self.rect.y = y
         self.vel_x_laser = +500
 
         self.flag_tiro = False
@@ -339,11 +361,27 @@ class Tiro(pygame.sprite.Sprite):
         sprites.add(self) 
         self.sprites = sprites 
     def update(self, delta_t):
+        
+        posicao_mouse = pygame.mouse.get_pos()
+        mod = np.linalg.norm(posicao_mouse-self.rect)
+        x = 1/mod
+        # if flag_clicou:
+        #     nova_v = (posicao_mouse-s)*x*40
+        # else:
+        nova_v = (posicao_mouse-self.rect)*x*20
+        v = nova_v
 
-        self.rect.x = (self.rect.x + self.vel_x_laser*delta_t)
-        lista = pygame.sprite.spritecollide(self, self.meteoros,True)
-        for tiro in lista:
-            self.sprites.remove(self)
+        forca = 8000/(math.dist((self.rect[0], self.rect[1]), (220,220))**2)
+        aceleracao = np.array([0, forca])
+        
+        
+        self.rect = self.rect + v+aceleracao
+
+        # self.rect.x = (self.rect.x + (self.vel_x_laser+aceleracao)*delta_t)
+ 
+        # lista = pygame.sprite.spritecollide(self, self.meteoros,True)
+        # for tiro in lista:
+        #     self.sprites.remove(self)
 
 class Meteoro(pygame.sprite.Sprite):
     def __init__(self, sprites, meteoros):
