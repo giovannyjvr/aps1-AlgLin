@@ -1,7 +1,8 @@
 import pygame
+from .tamanhos import *
 # Classe para representar a bola
 class Bola(pygame.sprite.Sprite):
-    def __init__(self):
+    def __init__(self, sprites):
         
         super().__init__()
         WHITE = (255, 255, 255)
@@ -9,10 +10,12 @@ class Bola(pygame.sprite.Sprite):
         self.image.fill(WHITE)
         self.rect = self.image.get_rect()
 
-    # def update(self):
-    #     pass  # Adicione aqui a lógica de atualização da bola
+        self.rect.x = SCREEN_WIDTH // 2
+        self.rect.y = SCREEN_HEIGHT - 60
+        self.speed_y = -60
 
-    #     self.rect = self.image.get_rect(center=position)
+        sprites.add(self) 
+        self.sprites = sprites 
 
     def update(self):
         self.rect.y -= 2  # Movimento da bola para cima
