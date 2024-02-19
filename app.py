@@ -18,15 +18,13 @@ class Jogo:
         self.lista_estrelas = estrelas.gera_estrelas()
         self.flag = True
         self.vel = 1
-
-
         fonte = pygame.font.get_default_font()
         self.fonte = pygame.font.Font(fonte, 12)
 
         self.tela = "tela_inicial"
         self.tela_inicial = TelaInicial(self)
         self.tela_final = TelaGameOver(self)
-
+        self.tela_2 = TelaJogo2(self)
         self.flag_tiro = False
         self.game_loop()
         self.window_i = pygame.display.set_mode((800,600))
@@ -39,7 +37,6 @@ class Jogo:
         pygame.display.set_caption("Jogo do Edu")
         self.assets = {}
         self.state = {}
-       
         self.assets["fundo"] = pygame.image.load("imagens/fundo_universo.jpg")
         self.assets["flag_estrela"] = True
         fonte = "font/PressStart2P.ttf"
@@ -49,16 +46,12 @@ class Jogo:
         if not(self.assets["musica_tocando"]):
             # musica.play()
             self.assets["musica_tocando"] = True
-
         self.assets["tela"] = "tela_inicial"
-
         self.state["t0"] = 0
         self.state["vel_nave"] = [0,0]
         self.state["posicao_nave"] = [300,400]
         self.state["last_updated"] = 0
-        # self.state["som"] = pygame.mixer.Sound("assets/snd/pew.wav")
-        
-        
+        self.state["flag_tela2"] = False
         return self.assets,self.state, self.window
     
     def desenha(self):
@@ -86,35 +79,28 @@ class Jogo:
         self.sprites.draw(self.window)
         pos = pygame.mouse.get_pos()
         pygame.draw.line(self.window, (255,255,255), (self.jogador.rect.x + 50,self.jogador.rect.y + 25), (pos[0], pos[1]))
-        
-
         pygame.display.update()
+
 
     def recebe_eventos(self):
         velocidade = 400
+        if self.state["flag_tela2"]:
+            self.tela = "tela_jogo2"
+            return False
         for event in pygame.event.get():
             if event.type == pygame.QUIT or self.jogador.vidas == 0:
                 self.tela = "tela_over"
                 return False
-            # if event.type == pygame.KEYDOWN and event.key == pygame.K_RIGHT:
-            #     self.jogador.vel_x+=velocidade
-            # if event.type == pygame.KEYDOWN and event.key == pygame.K_LEFT:
-            #     self.jogador.vel_x-=velocidade
             if event.type == pygame.KEYDOWN and event.key == pygame.K_UP:
                 self.jogador.vel_y-=velocidade
             if event.type == pygame.KEYDOWN and event.key == pygame.K_DOWN:
                 self.jogador.vel_y+=velocidade
-            # if event.type == pygame.KEYUP and event.key == pygame.K_RIGHT:
-            #     self.jogador.vel_x-=velocidade
-            # if event.type == pygame.KEYUP and event.key == pygame.K_LEFT:
-            #     self.jogador.vel_x+=velocidade
             if event.type == pygame.KEYUP and event.key == pygame.K_UP:
                 self.jogador.vel_y+=velocidade
             if event.type == pygame.KEYUP and event.key == pygame.K_DOWN:
                 self.jogador.vel_y-=velocidade
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-                
-                Tiro(self.sprites, self.planetas,self.jogador, self.jogador.rect.x+50, self.jogador.rect.y+25,self.vel)
+                Tiro(self.sprites, self.planetas,self.jogador, self.jogador.rect.x+50, self.jogador.rect.y+25,self.vel,self.tela, self.state)
             if event.type == pygame.KEYDOWN and event.key == pygame.K_e:
                 if self.vel < 3.0:
                     self.vel += 0.1
@@ -141,9 +127,23 @@ class Jogo:
             if self.tela == "tela_jogo":
                 while self.recebe_eventos():
                     self.desenha()
+            if self.tela == "tela_jogo2":
+                print(2)
+                self.state["flag_tela2"] = False
+                while self.recebe_eventos():
+                    self.tela_2.desenha()
             if self.tela == "tela_over":
                 while self.tela_final.recebe_eventos():
                     self.tela_final.desenha()
+
+class TelaJogo2:
+    def __init__(self, tela):
+        pygame.init()
+        self.window = pygame.display.set_mode((800,600))
+        self.tela = tela
+    def desenha(self):
+        self.window.fill((0,0,0))
+        pygame.display.update()
 
 class TelaInicial:
     def __init__(self,tela):
@@ -182,6 +182,7 @@ class TelaGameOver:
                 self.tela.tela = "tela_jogo"
                 return False
         return True
+    
     def desenha(self):
         fonte = pygame.font.get_default_font()
         fonte = pygame.font.Font(fonte, 24)
@@ -196,23 +197,18 @@ class Jogador(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
 
         self.flag_borda = False
-
         img_nave = pygame.image.load('imagens/nave.png')
         image = pygame.transform.scale(img_nave,(64,48))
         angulo = 0
         self.image = pygame.transform.rotate(image, angulo)
 
         self.rect = self.image.get_rect()
-        # self.rect.x = 640/2 - self.rect.width/2
-        # self.rect.y = 480 - self.rect.height
         self.rect.x = self.rect.width/5
         self.rect.y = 480 - self.rect.height
 
         self.vel_x = 0
         self.vel_y = 0
-
         self.planetas = planetas
-
         self.vidas = 3
 
 
@@ -236,11 +232,11 @@ class Jogador(pygame.sprite.Sprite):
 
 
 class Tiro(pygame.sprite.Sprite):
-    def __init__(self, sprites, planetas, jogador, x, y,vel):
+    def __init__(self, sprites, planetas, jogador, x, y, vel, tela,state):
         super().__init__()
-
+        self.tela = tela
         self.velo = vel
-
+        self.state = state
         img_laser = pygame.image.load('imagens/bola_de_canhao2.png')
         self.image = pygame.transform.scale(img_laser, (16, 12))
         self.rect = self.image.get_rect()
@@ -294,6 +290,10 @@ class Tiro(pygame.sprite.Sprite):
         for planeta in lista:
             self.sprites.remove(self)
             self.flag_tiro = True
+            # self.tela.tela = "tela_jogo2"
+            self.state["flag_tela2"] = True
+            
+                        
 
 class Planeta(pygame.sprite.Sprite):
     def __init__(self, sprites, planetas):
