@@ -1,101 +1,3 @@
-# from importes import *
-# pygame.init()
-# import math
-
-# # Cores
-# BLACK = (0, 0, 0)
-# WHITE = (255, 255, 255)
-# COR_PERSONAGEM = (30, 200, 20)
-
-# # Tamanho da tela e definição do FPS
-
-# clock = pygame.time.Clock()
-# FPS = 60  # Frames por Segundo
-# running = True
-
-# largura = 1000
-# altura = 700
-# tela = pygame.display.set_mode((largura, altura))
-
-# # Inicializar posicoes
-# v = np.array([16, -10])
-# s = np.array([SCREEN_WIDTH/5,SCREEN_HEIGHT - 50])
-# s1 = np.array([SCREEN_WIDTH/5,SCREEN_HEIGHT - 50])
-
-# # Personagem
-# bola = pygame.image.load("imagens/bola_de_canhao.png")  # Tamanho do bola
-# bola = pygame.transform.scale(bola, (20,20))
-
-# fundo = pygame.image.load("imagens/fundo.png")
-# fundo = pygame.transform.scale(fundo, (1000,700))
-# rodando = True
-
-# helicoptero = pygame.image.load("imagens/heli.png")
-# helicoptero = pygame.transform.scale(helicoptero, (20,20))
-
-# massa_tiro = 10
-# massa_planeta1 = 1000
-
-# flag_clicou = False
-# flag_atirou = False
-
-# while running:
-#     screen.fill(BLACK)
-#     screen.blit(fundo, (0, 0))
-    
-#     for event in pygame.event.get():
-#         if event.type == pygame.QUIT:
-#             rodando = False
-#         elif event.type == pygame.KEYDOWN:
-#             if event.key == pygame.K_SPACE:
-#                 flag_atirou = True
-#                 posicao_mouse = pygame.mouse.get_pos()
-
-#     mouse_presses = pygame.mouse.get_pressed()
-#     if mouse_presses[0]:
-#         pos = pygame.mouse.get_pos()
-#         if pos[0] > 600 and pos[0] < 640 and pos[1]>600 and pos[1]<640:
-#             flag_clicou = True
-#     if flag_clicou:
-#         pygame.draw.polygon(screen, (255,0,0), [(600, 600), (640, 600), (640, 640), (600, 640)])
-#     else: 
-#         pygame.draw.polygon(screen, (0,255,0), [(600, 600), (640, 600), (640, 640), (600, 640)])
-    
-#     pygame.draw.polygon(screen, (0,0,255), [(200, 200), (240, 200), (240, 240), (200, 240)])
-
-#     if flag_atirou:
-#         mod = np.linalg.norm(posicao_mouse-s)
-#         x = 1/mod
-#         if flag_clicou:
-#             nova_v = (posicao_mouse-s)*x*40
-#         else:
-#             nova_v = (posicao_mouse-s)*x*20
-#         s, v = s, nova_v
-#         flag_atirou = False
-
-#     forca = 8000/(math.dist((s[0], s[1]), (220,220))**2)
-#     aceleracao = np.array([0, forca])
-#     s = s + v+aceleracao
-
-#     pos = pygame.mouse.get_pos()
-#     pygame.draw.line(screen, (255,255,255), (SCREEN_WIDTH/2,SCREEN_HEIGHT - 50), (pos[0], pos[1]))
-
-#     clock.tick(FPS)  # Limita o FPS
-
-#     # Desenhar bola
-#     rect = pygame.Rect(s, (10, 10))  
-#     screen.blit(bola, rect)
-
-#     rect = pygame.Rect(s1, (10, 10))  
-#     screen.blit(helicoptero, rect)
-#     # Update!
-#     pygame.display.update()
-
-# pygame.quit()  # Finaliza o Pygame
-# sys.exit()
-
-
-
 
 from random import randint
 import pygame
@@ -106,11 +8,11 @@ import math
 class Jogo:
     def __init__(self):
         self.sprites = pygame.sprite.Group()
-        self.meteoros = pygame.sprite.Group()
+        self.planetas = pygame.sprite.Group()
         self.assets, self.state, self.window = Jogo.inicializa(self)
-        for i in range(1):
-            Meteoro(self.sprites, self.meteoros)
-        self.jogador = Jogador(self.meteoros)
+        for i in range(3):
+            Planeta(self.sprites, self.planetas)
+        self.jogador = Jogador(self.planetas)
         self.sprites.add(self.jogador)
         estrelas = Estrela(50)
         self.lista_estrelas = estrelas.gera_estrelas()
@@ -210,11 +112,8 @@ class Jogo:
             if event.type == pygame.KEYUP and event.key == pygame.K_DOWN:
                 self.jogador.vel_y-=velocidade
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-                # som = self.state["som"]
-                # som.play()
-                # Tiro(self.sprites, self.meteoros, self.jogador.rect.x, self.jogador.rect.y+25)
-                # Tiro(self.sprites, self.meteoros, self.jogador.rect.x+20, self.jogador.rect.y)
-                Tiro(self.sprites, self.meteoros,self.jogador, self.jogador.rect.x+50, self.jogador.rect.y+50)
+
+                Tiro(self.sprites, self.planetas,self.jogador, self.jogador.rect.x+50, self.jogador.rect.y+50)
 
         
         ultimo_tempo = self.state["last_updated"]
@@ -284,14 +183,14 @@ class TelaGameOver:
 
 
 class Jogador(pygame.sprite.Sprite):
-    def __init__(self, meteoros):
+    def __init__(self, planetas):
         pygame.sprite.Sprite.__init__(self)
 
         self.flag_borda = False
 
-        img_nave = pygame.image.load('imagens/heli.png')
-        image = pygame.transform.scale(img_nave,(64*1.5,48*1.5))
-        angulo = 20
+        img_nave = pygame.image.load('imagens/nave.png')
+        image = pygame.transform.scale(img_nave,(64,48))
+        angulo = 0
         self.image = pygame.transform.rotate(image, angulo)
 
         self.rect = self.image.get_rect()
@@ -303,7 +202,7 @@ class Jogador(pygame.sprite.Sprite):
         self.vel_x = 0
         self.vel_y = 0
 
-        self.meteoros = meteoros
+        self.planetas = planetas
 
         self.vidas = 3
 
@@ -321,31 +220,18 @@ class Jogador(pygame.sprite.Sprite):
             self.rect.y = 600 - self.rect.height
         if self.rect.y < 0:
             self.rect.y = 0
-        lista = pygame.sprite.spritecollide(self, self.meteoros,True)
+        lista = pygame.sprite.spritecollide(self, self.planetas,True)
         for i in range(len(lista)):
             self.vidas -= 1
 
 
 class Tiro(pygame.sprite.Sprite):
-    def __init__(self, sprites,meteoros,jogador, x, y):
+    def __init__(self, sprites,planetas,jogador, x, y):
         pygame.sprite.Sprite.__init__(self)
 
         img_laser = pygame.image.load('imagens/bola_de_canhao.png')
         self.image = pygame.transform.scale(img_laser,(16,12))
         
-        #     if flag_atirou:
-#         mod = np.linalg.norm(posicao_mouse-s)
-#         x = 1/mod
-#         if flag_clicou:
-#             nova_v = (posicao_mouse-s)*x*40
-#         else:
-#             nova_v = (posicao_mouse-s)*x*20
-#         s, v = s, nova_v
-#         flag_atirou = False
-
-#     forca = 8000/(math.dist((s[0], s[1]), (220,220))**2)
-#     aceleracao = np.array([0, forca])
-#     s = s + v+aceleracao
 
         self.initial_v = np.array([16, -10])
         # self.initial_s = 
@@ -357,7 +243,7 @@ class Tiro(pygame.sprite.Sprite):
         self.vel_x_laser = +500
 
         self.flag_tiro = False
-        self.meteoros = meteoros
+        self.planetas = planetas
         sprites.add(self) 
         self.sprites = sprites 
     def update(self, delta_t):
@@ -379,21 +265,21 @@ class Tiro(pygame.sprite.Sprite):
 
         # self.rect.x = (self.rect.x + (self.vel_x_laser+aceleracao)*delta_t)
  
-        # lista = pygame.sprite.spritecollide(self, self.meteoros,True)
+        # lista = pygame.sprite.spritecollide(self, self.planetas,True)
         # for tiro in lista:
         #     self.sprites.remove(self)
 
-class Meteoro(pygame.sprite.Sprite):
-    def __init__(self, sprites, meteoros):
+class Planeta(pygame.sprite.Sprite):
+    def __init__(self, sprites, planetas):
         pygame.sprite.Sprite.__init__(self)
 
-        img_meteoro = pygame.image.load("imagens/passaro.png")
-        self.image = pygame.transform.scale(img_meteoro,(32,24))
+        img_planeta = pygame.image.load("imagens/planeta1.png")
+        self.image = pygame.transform.scale(img_planeta,(64,48))
         self.rect = self.image.get_rect()
         self.rect.x = randint(0,640)
         self.rect.y = randint(0,480)
         sprites.add(self)
-        meteoros.add(self)
+        planetas.add(self)
 
 class Estrela:
     def __init__(self, quant_estrelas):
