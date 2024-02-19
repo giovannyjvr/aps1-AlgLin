@@ -255,7 +255,7 @@ class Tiro(pygame.sprite.Sprite):
         self.flag_tiro = True
 
     def update(self, delta_t):
-
+        #Preciso fazer com que os tiros andem na direção do mouse
         if self.flag_tiro:
             posicao_mouse = pygame.mouse.get_pos()
             print(posicao_mouse)
@@ -265,7 +265,9 @@ class Tiro(pygame.sprite.Sprite):
             nova_v = (posicao_mouse - posicao_atual) * x * 2
             self.initial_v = nova_v
             self.flag_tiro = False
-            
+
+        self.rect.x += self.initial_v[0] * self.vel_x_laser
+        self.rect.y += self.initial_v[1] * self.vel_y_laser
         
         # Atualiza a posição do tiro
         self.rect.x += self.initial_v[0] * self.velo
