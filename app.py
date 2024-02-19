@@ -112,7 +112,7 @@ class Jogo:
             if event.type == pygame.KEYUP and event.key == pygame.K_DOWN:
                 self.jogador.vel_y-=velocidade
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-
+                
                 Tiro(self.sprites, self.planetas,self.jogador, self.jogador.rect.x+50, self.jogador.rect.y+50)
 
         
@@ -225,49 +225,64 @@ class Jogador(pygame.sprite.Sprite):
             self.vidas -= 1
 
 
+
 class Tiro(pygame.sprite.Sprite):
-    def __init__(self, sprites,planetas,jogador, x, y):
-        pygame.sprite.Sprite.__init__(self)
+    def __init__(self, sprites, planetas, jogador, x, y):
+        super().__init__()
 
         img_laser = pygame.image.load('imagens/bola_de_canhao.png')
-        self.image = pygame.transform.scale(img_laser,(16,12))
-        
+        self.image = pygame.transform.scale(img_laser, (16, 12))
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
 
         self.initial_v = np.array([16, -10])
-        # self.initial_s = 
-        self.rect = self.image.get_rect()
-        self.vel_y_laser = 0
-        self.rect = np.array([x, y])
-        # self.rect.x = x
-        # self.rect.y = y
-        self.vel_x_laser = +500
+        self.vel_y_laser = 10
+        self.vel_x_laser = 10  # Valor original ajustado para não causar confusão
 
         self.flag_tiro = False
         self.planetas = planetas
-        sprites.add(self) 
-        self.sprites = sprites 
+        sprites.add(self)
+        self.sprites = sprites
+
+        self.flag_tiro = True
+
     def update(self, delta_t):
-        
-        posicao_mouse = pygame.mouse.get_pos()
-        mod = np.linalg.norm(posicao_mouse-self.rect)
-        x = 1/mod
-        # if flag_clicou:
-        #     nova_v = (posicao_mouse-s)*x*40
-        # else:
-        nova_v = (posicao_mouse-self.rect)*x*20
-        v = nova_v
 
-        forca = 8000/(math.dist((self.rect[0], self.rect[1]), (220,220))**2)
-        aceleracao = np.array([0, forca])
+        if self.flag_tiro:
+            posicao_mouse = pygame.mouse.get_pos()
+            posicao_atual = np.array([self.rect.x, self.rect.y])
+            mod = np.linalg.norm(posicao_mouse - posicao_atual)
+            x = 1 / mod
+            nova_v = (posicao_mouse - posicao_atual) * x * 2
+            self.initial_v = nova_v
+            self.flag_tiro = False
+            
         
-        
-        self.rect = self.rect + v+aceleracao
+        # Atualiza a posição do tiro
+        self.rect.x += self.initial_v[0] 
+        self.rect.y += self.initial_v[1] 
+        print(self.initial_v)
+        # Calcula a aceleração
+        # a = np.array([0, 8000/(math.dist((self.rect.x, self.rect.y), (220,220))**2)])
+        # self.initial_v = self.initial_v 
 
-        # self.rect.x = (self.rect.x + (self.vel_x_laser+aceleracao)*delta_t)
- 
-        # lista = pygame.sprite.spritecollide(self, self.planetas,True)
-        # for tiro in lista:
-        #     self.sprites.remove(self)
+        # Atualiza a posição com base na nova velocidade e aceleração
+        self.rect.x += 0.005 * self.initial_v[0]
+        self.rect.y += 0.005 * self.initial_v[1]
+
+       
+
+        # Verifica se o tiro saiu da tela ou atingiu um planeta
+        if self.rect.x > 800 or self.rect.y > 600 or self.rect.y < 0:
+            self.flag_tiro = True
+            self.sprites.remove(self)
+           
+
+        lista = pygame.sprite.spritecollide(self, self.planetas, True)
+        for planeta in lista:
+            self.sprites.remove(self)
+            self.flag_tiro = True
 
 class Planeta(pygame.sprite.Sprite):
     def __init__(self, sprites, planetas):
@@ -276,8 +291,8 @@ class Planeta(pygame.sprite.Sprite):
         img_planeta = pygame.image.load("imagens/planeta1.png")
         self.image = pygame.transform.scale(img_planeta,(64,48))
         self.rect = self.image.get_rect()
-        self.rect.x = randint(0,640)
-        self.rect.y = randint(0,480)
+        self.rect.x = randint(400,700)
+        self.rect.y = randint(0,500)
         sprites.add(self)
         planetas.add(self)
 
