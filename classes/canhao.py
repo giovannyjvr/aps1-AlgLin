@@ -10,5 +10,7 @@ class Canhao(pygame.sprite.Sprite):
         self.image = pygame.transform.scale(self.image, (75,90))
         self.rect = self.image.get_rect(center=((SCREEN_WIDTH // 2 )+ 10, SCREEN_HEIGHT + 25))
 
+        self.flag_clicou = False
+        self.flag_atirou = False
     def draw(self):
         screen.blit(self.image, self.rect)
