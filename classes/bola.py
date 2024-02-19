@@ -1,14 +1,21 @@
 import pygame
+from .tamanhos import *
 # Classe para representar a bola
 class Bola(pygame.sprite.Sprite):
-    def __init__(self, position):
-        super().__init__()
+    def __init__(self, sprites):
         
-        # Carrega a imagem da bola e redefine o tamanho
-        self.image = pygame.image.load('imagens/bola_de_canhao.png').convert_alpha()
-        self.image = pygame.transform.scale(self.image, (20,20))
+        super().__init__()
+        WHITE = (255, 255, 255)
+        self.image = pygame.Surface((20, 20))
+        self.image.fill(WHITE)
+        self.rect = self.image.get_rect()
 
-        self.rect = self.image.get_rect(center=position)
+        self.rect.x = SCREEN_WIDTH // 2
+        self.rect.y = SCREEN_HEIGHT - 60
+        self.speed_y = -60
+
+        sprites.add(self) 
+        self.sprites = sprites 
 
     def update(self):
         self.rect.y -= 2  # Movimento da bola para cima
