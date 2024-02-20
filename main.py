@@ -20,6 +20,7 @@ class Jogo:
     def __init__(self):
         self.sprites = pygame.sprite.Group()
         self.planetas = pygame.sprite.Group()
+        self.alvo = pygame.sprite.Group()
         self.assets, self.state, self.window = Jogo.inicializa(self)
         self.jogador = Jogador(self.planetas)
         estrelas = Estrela(50)
@@ -246,6 +247,8 @@ class Jogador(pygame.sprite.Sprite):
         lista = pygame.sprite.spritecollide(self, self.planetas,True)
         for i in range(len(lista)):
             self.vidas -= 1
+
+
 
 
 class Tiro(pygame.sprite.Sprite):
