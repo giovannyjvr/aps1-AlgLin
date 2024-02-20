@@ -77,12 +77,8 @@ class Jogo:
         texto_fps = fonte.render(f'fps: {fps:.2f}', True, (255,255,255))
         self.window.blit(texto_fps,(w - 130,h - 20))
         self.sprites.draw(self.window)
-        posicao_mouse = pygame.mouse.get_pos()
-        limite_x = 300
-        if posicao_mouse[0] < limite_x:
-            # posicao_mouse_y = posicao_mouse[1]
-            # posicao_mouse =  (posicao_mouse[0] //5, posicao_mouse[1] //10)
-            pygame.draw.line(self.window, (255,255,255), (self.jogador.rect.x + 50,self.jogador.rect.y + 25), posicao_mouse)
+        pos = pygame.mouse.get_pos()
+        pygame.draw.line(self.window, (255,255,255), (self.jogador.rect.x + 50,self.jogador.rect.y + 25), (pos[0], pos[1]))
         pygame.display.update()
 
 
