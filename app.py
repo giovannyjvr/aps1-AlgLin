@@ -57,6 +57,7 @@ class Jogo:
         self.window.fill((0,0,0))
         self.window.blit(self.assets["fundo"], (0,0))
 
+
         fonte = self.assets["fonte"]
         fonte = pygame.font.Font(fonte,12)
         
@@ -129,7 +130,13 @@ class Jogo:
                     self.tela_inicial.desenha()
             if self.tela == "tela_jogo":
                 while self.recebe_eventos():
+                    tempo_atual = pygame.time.get_ticks()
+                    delta_t = (tempo_atual - self.state["last_updated"]) / 1000
+                    for planeta in self.planetas:
+                        planeta.update(delta_t)
+                    self.state["last_updated"] = tempo_atual
                     self.desenha()
+
             if self.tela == "tela_jogo2":
                 print(2)
                 self.state["flag_tela2"] = False
@@ -303,14 +310,32 @@ class Tiro(pygame.sprite.Sprite):
 class Planeta(pygame.sprite.Sprite):
     def __init__(self, sprites, planetas):
         pygame.sprite.Sprite.__init__(self)
-
-        img_planeta = pygame.image.load("imagens/planeta1.png")
-        self.image = pygame.transform.scale(img_planeta,(64,48))
+        self.imagens_planetas = ["imagens/planetas/1.png",
+                                "imagens/planetas/2.png",
+                                "imagens/planetas/3.png",
+                                "imagens/planetas/4.png",
+                                "imagens/planetas/5.png",
+                                "imagens/planetas/6.png",
+                                "imagens/planetas/7.png",
+                                "imagens/planetas/8.png"]  # Lista de imagens dos planetas
+        self.indice_imagem = 0  # Índice da imagem atual
+        self.tempo_anterior = pygame.time.get_ticks()  # Tempo da última atualização
+        self.image = pygame.image.load(self.imagens_planetas[self.indice_imagem])
+        self.image = pygame.transform.scale(self.image, (64, 48))
         self.rect = self.image.get_rect()
-        self.rect.x = randint(400,700)
-        self.rect.y = randint(20,480)
+        self.rect.x = randint(400, 700)
+        self.rect.y = randint(20, 480)
         sprites.add(self)
         planetas.add(self)
+
+    def update(self, delta_t):
+        tempo_atual = pygame.time.get_ticks()
+        if tempo_atual - self.tempo_anterior >= 500:  # 2 segundos em milissegundos
+            self.indice_imagem = (self.indice_imagem + 1) % len(self.imagens_planetas)  # Próxima imagem na lista
+            self.image = pygame.image.load(self.imagens_planetas[self.indice_imagem])  # Atualiza a imagem do planeta
+            self.image = pygame.transform.scale(self.image, (64, 48))
+            self.tempo_anterior = tempo_atual  # Atualiza o tempo da última atualização
+
 
 class Estrela:
     def __init__(self, quant_estrelas):
