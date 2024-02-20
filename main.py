@@ -4,11 +4,24 @@ import pygame
 import numpy as np
 import math
 
+def fps(self):
+    fonte = self.assets["fonte"]
+    fonte = pygame.font.Font(fonte,12)
+    fps = 0
+    t0 = self.state["t0"]
+    t1 = pygame.time.get_ticks()
+    if t0 > 0:
+        fps = 1000/(t1 - t0)
+    self.state["t0"] = t1
+    texto_fps = fonte.render(f'fps: {fps:.2f}', True, (255,255,255))
+    return texto_fps
+
 
 class Jogo:
     def __init__(self):
         self.sprites = pygame.sprite.Group()
         self.planetas = pygame.sprite.Group()
+        self.alvo = pygame.sprite.Group()
         self.assets, self.state, self.window = Jogo.inicializa(self)
         for i in range(3):
             Planeta(self.sprites, self.planetas)
@@ -16,12 +29,18 @@ class Jogo:
         self.sprites.add(self.jogador)
         estrelas = Estrela(50)
         self.lista_estrelas = estrelas.gera_estrelas()
+        coord_estrelas = [[600, 400]]
+        for i in range(1):
+            Planeta(self.sprites, self.planetas, coord_estrelas[i][0], coord_estrelas[i][1])
+        self.sprites.add(self.jogador)
+
         self.flag = True
         self.vel = 1
         fonte = pygame.font.get_default_font()
         self.fonte = pygame.font.Font(fonte, 12)
 
         self.tela = "tela_inicial"
+
         self.tela_inicial = TelaInicial(self)
         self.tela_final = TelaGameOver(self)
         self.tela_2 = TelaJogo2(self)
@@ -35,6 +54,26 @@ class Jogo:
         pygame.init()
         self.window = pygame.display.set_mode((800,600))
         pygame.display.set_caption("Jogo do Edu")
+        fundo = pygame.image.load("imagens/fundo.png")
+        fundo = pygame.transform.scale(fundo, (800,600))
+        fundo2 = pygame.image.load("imagens/fundo2.png")
+        fundo2 = pygame.transform.scale(fundo2, (800,600))
+        self.state = {
+            "t0": 0,
+            "vel_nave": [0,0],
+            "posicao_nave": [300,400],
+            "last_updated": 0,
+            "flag_tela2": False
+        }
+        self.assets = {
+            "fundo": fundo,
+            "fundo2": fundo2,
+            "flag_estrela": True,
+            "fonte": "font/PressStart2P.ttf",
+            "musica_tocando": False,
+            "tela": "tela_inicial"
+        }
+
         self.assets = {}
         self.state = {}
         self.assets["fundo"] = pygame.image.load("imagens/fundo_universo.jpg")
@@ -42,6 +81,7 @@ class Jogo:
         fonte = "font/PressStart2P.ttf"
         self.assets["fonte"] = fonte
         self.assets["musica_tocando"] = False
+
         # musica = pygame.mixer.Sound("assets/snd/tgfcoder-FrozenJam-SeamlessLoop.ogg")
         if not(self.assets["musica_tocando"]):
             # musica.play()
@@ -76,6 +116,11 @@ class Jogo:
         self.state["t0"] = t1
         texto_fps = fonte.render(f'fps: {fps:.2f}', True, (255,255,255))
         self.window.blit(texto_fps,(w - 130,h - 20))
+
+        pos = pygame.mouse.get_pos()
+        if pos[0] < 300 and pos[1] < self.jogador.rect.y + 100 and pos[1] > self.jogador.rect.y - 100:  
+            pygame.draw.line(self.window, (255,255,255), (self.jogador.rect.x + 50,self.jogador.rect.y + 25), (pos[0], pos[1]))
+        
         self.sprites.draw(self.window)
         posicao_mouse = pygame.mouse.get_pos()
         limite_x = 300
@@ -147,6 +192,7 @@ class TelaJogo2:
         self.tela = tela
     def desenha(self):
         self.window.fill((0,0,0))
+        self.window.blit(self.assets["fundo2"], (0,0))
         pygame.display.update()
 
 class TelaInicial:
@@ -201,8 +247,8 @@ class Jogador(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
 
         self.flag_borda = False
-        img_nave = pygame.image.load('imagens/nave.png')
-        image = pygame.transform.scale(img_nave,(64,48))
+        img_nave = pygame.image.load('imagens/navepft.png')
+        image = pygame.transform.scale(img_nave,(100,100))
         angulo = 0
         self.image = pygame.transform.rotate(image, angulo)
 
@@ -235,19 +281,20 @@ class Jogador(pygame.sprite.Sprite):
 
 
 
+
 class Tiro(pygame.sprite.Sprite):
     def __init__(self, sprites, planetas, jogador, x, y, vel, tela,state):
         super().__init__()
         self.tela = tela
         self.velo = vel
         self.state = state
-        img_laser = pygame.image.load('imagens/bola_de_canhao2.png')
-        self.image = pygame.transform.scale(img_laser, (16, 12))
+        img_laser = pygame.image.load('imagens/tiroe.png')
+        self.image = pygame.transform.scale(img_laser, (50, 50))
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
 
-        self.initial_v = np.array([16, -10])
+        self.initial_v = np.array([1, -1])
         self.vel_y_laser = 10
         self.vel_x_laser = 10  # Valor original ajustado para não causar confusão
 
@@ -270,6 +317,19 @@ class Tiro(pygame.sprite.Sprite):
             self.initial_v = nova_v
             self.flag_tiro = False
 
+        for planeta in self.planetas:
+            x = planeta.rect.x
+            y = planeta.rect.y
+            tamanho_vetor_horizontal = x - self.rect.x
+            tamanho_vetor_vertical = y - self.rect.y
+            vetor = np.array([tamanho_vetor_horizontal, tamanho_vetor_vertical])
+            vetor  = vetor / np.linalg.norm(vetor)
+            forca = vetor*(5000/ (tamanho_vetor_horizontal**2 + tamanho_vetor_vertical**2)**0.5)
+            
+        # Atualiza a posição com base na nova velocidade e aceleração
+        self.rect.x += self.initial_v[0] + forca[0]/100
+        self.rect.y += self.initial_v[1] + forca[1]/100
+        
         self.rect.x += self.initial_v[0] * self.vel_x_laser
         self.rect.y += self.initial_v[1] * self.vel_y_laser
         
@@ -290,6 +350,18 @@ class Tiro(pygame.sprite.Sprite):
         if self.rect.x > 800 or self.rect.y > 600 or self.rect.y < 0:
             self.flag_tiro = True
             self.sprites.remove(self)
+    
+        lista = pygame.sprite.spritecollide(self, self.planetas, True)
+        if self.state["flag_tela2"]:
+            for planeta in lista:
+                self.sprites.remove(self)
+                self.planetas.empty()
+                self.state["flag_tela2"] = False
+        else:
+            for planeta in lista:
+                self.planetas.empty()
+                self.flag_tiro = True
+                self.state["flag_tela2"] = True
            
 
         lista = pygame.sprite.spritecollide(self, self.planetas, True)
@@ -298,15 +370,17 @@ class Tiro(pygame.sprite.Sprite):
             self.flag_tiro = True
             # self.tela.tela = "tela_jogo2"
             self.state["flag_tela2"] = True
-            
-                        
 
 class Planeta(pygame.sprite.Sprite):
     def __init__(self, sprites, planetas):
         pygame.sprite.Sprite.__init__(self)
 
-        img_planeta = pygame.image.load("imagens/planeta1.png")
-        self.image = pygame.transform.scale(img_planeta,(64,48))
+        img_planeta1 = pygame.image.load("imagens/planeta1.png")
+        image1 = pygame.transform.scale(img_planeta1,(128,128))
+        img_planeta2 = pygame.image.load("imagens/planeta2.png")
+        image2 = pygame.transform.scale(img_planeta2,(128,128))
+        lista_planetas = [image1, image2]
+        self.image = lista_planetas[randint(0,1)]
         self.rect = self.image.get_rect()
         self.rect.x = randint(400,700)
         self.rect.y = randint(20,480)
