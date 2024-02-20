@@ -233,8 +233,9 @@ class TelaJogo2:
 
 
 class Jogador(pygame.sprite.Sprite):
-    def __init__(self, alvo):
+    def __init__(self, planetas):
         pygame.sprite.Sprite.__init__(self)
+
         self.flag_borda = False
         img_nave = pygame.image.load('imagens/navepft.png')
         image = pygame.transform.scale(img_nave, (100, 100))
@@ -246,12 +247,10 @@ class Jogador(pygame.sprite.Sprite):
 
         self.vel_x = 0
         self.vel_y = 0
-        
+        self.planetas = planetas
         self.vidas = 3
 
-
     def update(self, delta_t):
-
         # Obtenha a posição do mouse
         mouse_x, mouse_y = pygame.mouse.get_pos()
         # Calcule o vetor da posição do jogador para a posição do mouse
@@ -262,21 +261,10 @@ class Jogador(pygame.sprite.Sprite):
         # Converta o ângulo de radianos para graus
         angulo_deg = np.degrees(angulo_rad)
         # Rotacione a imagem original do jogador
-        self.image = pygame.transform.rotate(self.image, -angulo_deg)
+        self.image = pygame.transform.rotate(self.image_original, -angulo_deg)
         # Atualize a posição do jogador
-        
+        self.rect = self.image.get_rect(center=self.rect.center)
 
-        self.rect.x = (self.rect.x + self.vel_x*delta_t) 
-        self.rect.y = (self.rect.y + self.vel_y*delta_t)
-    
-        if self.rect.x + self.rect.width >= 640:
-            self.rect.x = 640 - self.rect.width
-        if self.rect.x  < 0:
-            self.rect.x = 0
-        if self.rect.y + self.rect.height >= 600:
-            self.rect.y = 600 - self.rect.height
-        if self.rect.y < 0:
-            self.rect.y = 0
 
 
 
