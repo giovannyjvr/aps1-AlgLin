@@ -16,8 +16,6 @@ def fps(self):
     texto_fps = fonte.render(f'fps: {fps:.2f}', True, (255,255,255))
     return texto_fps
 
-
-
 class Jogo:
     def __init__(self):
         self.sprites = pygame.sprite.Group()
@@ -26,8 +24,8 @@ class Jogo:
         self.jogador = Jogador(self.planetas)
         estrelas = Estrela(50)
         self.lista_estrelas = estrelas.gera_estrelas()
-        coord_estrelas = [[600, 400], [700, 150], [450, 500]]
-        for i in range(3):
+        coord_estrelas = [[600, 400]]
+        for i in range(1):
             Planeta(self.sprites, self.planetas, coord_estrelas[i][0], coord_estrelas[i][1])
         self.sprites.add(self.jogador)
 
@@ -35,9 +33,7 @@ class Jogo:
         self.fonte = pygame.font.Font(fonte, 12)
 
         self.tela = "tela_inicial"
-        # self.tela_inicial = TelaInicial(self.window)
-        # self.tela_final = TelaGameOver(self.window)
-        # self.tela_2 = TelaJogo2()
+
         self.flag_tiro = False
         self.vel = 1.0
         self.window = pygame.display.set_mode((800,600)) 
@@ -79,7 +75,10 @@ class Jogo:
         pygame.init()
         self.window = pygame.display.set_mode((800,600))
         pygame.display.set_caption("Jogo do Edu")
-        
+        fundo = pygame.image.load("imagens/fundo.png")
+        fundo = pygame.transform.scale(fundo, (800,600))
+        fundo2 = pygame.image.load("imagens/fundo2.png")
+        fundo2 = pygame.transform.scale(fundo2, (800,600))
         self.state = {
             "t0": 0,
             "vel_nave": [0,0],
@@ -88,7 +87,8 @@ class Jogo:
             "flag_tela2": False
         }
         self.assets = {
-            "fundo": pygame.image.load("imagens/fundo_universo.jpg"),
+            "fundo": fundo,
+            "fundo2": fundo2,
             "flag_estrela": True,
             "fonte": "font/PressStart2P.ttf",
             "musica_tocando": False,
@@ -113,8 +113,9 @@ class Jogo:
         self.window.blit(texto_fps,(w - 130,h - 20))
 
         pos = pygame.mouse.get_pos()
-        pygame.draw.line(self.window, (255,255,255), (self.jogador.rect.x + 50,self.jogador.rect.y + 25), (pos[0], pos[1]))
-
+        if pos[0] < 300 and pos[1] < self.jogador.rect.y + 100 and pos[1] > self.jogador.rect.y - 100:  
+            pygame.draw.line(self.window, (255,255,255), (self.jogador.rect.x + 50,self.jogador.rect.y + 25), (pos[0], pos[1]))
+        
         self.sprites.draw(self.window)
         pygame.display.update()
     
@@ -192,7 +193,7 @@ class TelaJogo2:
 
     def desenha(self):
         self.window.fill((0,0,0))
-        self.window.blit(self.assets["fundo"], (0,0))
+        self.window.blit(self.assets["fundo2"], (0,0))
 
         for cada_lista in self.lista_estrelas:
             pygame.draw.circle(self.window,(255,255,255), (cada_lista[0],cada_lista[1]), cada_lista[2])
@@ -214,8 +215,8 @@ class Jogador(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
 
         self.flag_borda = False
-        img_nave = pygame.image.load('imagens/nave.png')
-        image = pygame.transform.scale(img_nave,(64,48))
+        img_nave = pygame.image.load('imagens/navepft.png')
+        image = pygame.transform.scale(img_nave,(100,100))
         angulo = 0
         self.image = pygame.transform.rotate(image, angulo)
 
@@ -247,20 +248,19 @@ class Jogador(pygame.sprite.Sprite):
             self.vidas -= 1
 
 
-
 class Tiro(pygame.sprite.Sprite):
     
     def __init__(self, sprites, planetas, jogador, x, y, vel, state):
         super().__init__()
         self.velo = vel
         self.state = state
-        img_laser = pygame.image.load('imagens/bola_de_canhao2.png')
-        self.image = pygame.transform.scale(img_laser, (16, 12))
+        img_laser = pygame.image.load('imagens/tiroe.png')
+        self.image = pygame.transform.scale(img_laser, (50, 50))
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
 
-        self.initial_v = np.array([16, -10])
+        self.initial_v = np.array([1, -1])
         self.vel_y_laser = 10
         self.vel_x_laser = 10  # Valor original ajustado para não causar confusão
 
@@ -283,16 +283,25 @@ class Tiro(pygame.sprite.Sprite):
             self.initial_v = nova_v
             self.flag_tiro = False
 
+        for planeta in self.planetas:
+            x = planeta.rect.x
+            y = planeta.rect.y
+            tamanho_vetor_horizontal = x - self.rect.x
+            tamanho_vetor_vertical = y - self.rect.y
+            vetor = np.array([tamanho_vetor_horizontal, tamanho_vetor_vertical])
+            vetor  = vetor / np.linalg.norm(vetor)
+            forca = vetor*(5000/ (tamanho_vetor_horizontal**2 + tamanho_vetor_vertical**2)**0.5)
+            
         # Atualiza a posição com base na nova velocidade e aceleração
-        self.rect.x += 7 * self.initial_v[0] * self.velo
-        self.rect.y += 7 * self.initial_v[1] * self.velo
-        print(self.rect.x, self.rect.y)
+        self.rect.x += self.initial_v[0] + forca[0]/100
+        self.rect.y += self.initial_v[1] + forca[1]/100
+        
+
         # Verifica se o tiro saiu da tela ou atingiu um planeta
         if self.rect.x > 800 or self.rect.y > 600 or self.rect.y < 0:
             self.flag_tiro = True
             self.sprites.remove(self)
-          
-
+    
         lista = pygame.sprite.spritecollide(self, self.planetas, True)
         if self.state["flag_tela2"]:
             for planeta in lista:
@@ -305,13 +314,16 @@ class Tiro(pygame.sprite.Sprite):
                 self.flag_tiro = True
                 self.state["flag_tela2"] = True
 
-
 class Planeta(pygame.sprite.Sprite):
     def __init__(self, sprites, planetas, x, y):
         pygame.sprite.Sprite.__init__(self)
 
-        img_planeta = pygame.image.load("imagens/planeta1.png")
-        self.image = pygame.transform.scale(img_planeta,(64,48))
+        img_planeta1 = pygame.image.load("imagens/planeta1.png")
+        image1 = pygame.transform.scale(img_planeta1,(128,128))
+        img_planeta2 = pygame.image.load("imagens/planeta2.png")
+        image2 = pygame.transform.scale(img_planeta2,(128,128))
+        lista_planetas = [image1, image2]
+        self.image = lista_planetas[randint(0,1)]
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
