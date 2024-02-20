@@ -204,8 +204,9 @@ class TelaJogo2:
         self.window.blit(texto_fps,(w - 130,h - 20))
 
         pos = pygame.mouse.get_pos()
-        pygame.draw.line(self.window, (255,255,255), (self.jogador.rect.x + 50,self.jogador.rect.y + 25), (pos[0], pos[1]))
-
+        if pos[0] < 300 and pos[1] < self.jogador.rect.y + 100 and pos[1] > self.jogador.rect.y - 100:  
+            pygame.draw.line(self.window, (255,255,255), (self.jogador.rect.x + 50,self.jogador.rect.y + 25), (pos[0], pos[1]))
+        
         self.sprites.draw(self.window)
         pygame.display.update()
        
@@ -217,12 +218,11 @@ class Jogador(pygame.sprite.Sprite):
 
         self.flag_borda = False
         img_nave = pygame.image.load('imagens/navepft.png')
-        image = pygame.transform.scale(img_nave,(100,100))
-        angulo = 0
-        self.image = pygame.transform.rotate(image, angulo)
-
+        image = pygame.transform.scale(img_nave, (100, 100))
+        self.image_original = pygame.transform.rotate(image, 323)  # Rotação original da imagem
+        self.image = self.image_original.copy()  # Cópia da imagem original para a transformação
         self.rect = self.image.get_rect()
-        self.rect.x = self.rect.width/5
+        self.rect.x = self.rect.width / 5
         self.rect.y = 480 - self.rect.height
 
         self.vel_x = 0
@@ -230,24 +230,20 @@ class Jogador(pygame.sprite.Sprite):
         self.planetas = planetas
         self.vidas = 3
 
-
     def update(self, delta_t):
-
-        self.rect.x = (self.rect.x + self.vel_x*delta_t) 
-        self.rect.y = (self.rect.y + self.vel_y*delta_t)
-    
-        if self.rect.x + self.rect.width >= 640:
-            self.rect.x = 640 - self.rect.width
-        if self.rect.x  < 0:
-            self.rect.x = 0
-        if self.rect.y + self.rect.height >= 600:
-            self.rect.y = 600 - self.rect.height
-        if self.rect.y < 0:
-            self.rect.y = 0
-        lista = pygame.sprite.spritecollide(self, self.planetas,True)
-        for i in range(len(lista)):
-            self.vidas -= 1
-
+        # Obtenha a posição do mouse
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+        # Calcule o vetor da posição do jogador para a posição do mouse
+        vetor_x = mouse_x - self.rect.x
+        vetor_y = mouse_y - self.rect.y
+        # Calcule o ângulo entre o vetor e o eixo x usando arctan2
+        angulo_rad = np.arctan2(vetor_y, vetor_x)
+        # Converta o ângulo de radianos para graus
+        angulo_deg = np.degrees(angulo_rad)
+        # Rotacione a imagem original do jogador
+        self.image = pygame.transform.rotate(self.image_original, -angulo_deg)
+        # Atualize a posição do jogador
+        self.rect = self.image.get_rect(center=self.rect.center)
 
 
 
