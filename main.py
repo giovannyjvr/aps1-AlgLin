@@ -200,11 +200,11 @@ class TelaJogo2:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 Tiro(self.sprites, self.alvo, self.jogador, self.jogador.rect.x + 50, self.jogador.rect.y + 25, self.vel, self.state, self.planeta)
             if event.type == pygame.KEYDOWN and event.key == pygame.K_e:
-                if self.vel < 3.0:
-                    self.vel += 0.1             
+                if self.vel < 3.5:
+                    self.vel += 0.3             
             if event.type == pygame.KEYDOWN and event.key == pygame.K_q:
-                if self.vel >0.4 :
-                    self.vel -= 0.1
+                if self.vel >1.3 :
+                    self.vel -= 0.3
         ultimo_tempo = self.state["last_updated"]
         tempo = pygame.time.get_ticks()
         delta_t = (tempo-ultimo_tempo)/1000
@@ -299,8 +299,9 @@ class Tiro(pygame.sprite.Sprite):
         self.rect.x = x
         self.rect.y = y
         self.planetas = planeta
+        
 
-        self.initial_v = np.array([1, -1])
+        self.initial_v = np.array([3,-3])
         self.vel_y_laser = 10
         self.vel_x_laser = 10  # Valor original ajustado para não causar confusão
 
@@ -339,8 +340,8 @@ class Tiro(pygame.sprite.Sprite):
             soma_no_x += forca[0]
             soma_no_y += forca[1]
 
-        self.rect.x += self.initial_v[0] + soma_no_x/50
-        self.rect.y += self.initial_v[1] + soma_no_y/50    
+        self.rect.x += (self.initial_v[0] + soma_no_x/50) * self.velo
+        self.rect.y += (self.initial_v[1] + soma_no_y/50) *  self.velo 
         
         # Atualiza a posição com base na nova velocidade e aceleração
         
