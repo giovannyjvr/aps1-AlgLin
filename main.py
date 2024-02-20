@@ -285,7 +285,7 @@ class Tiro(pygame.sprite.Sprite):
             nova_v = (posicao_mouse - posicao_atual) * x * 2
             self.initial_v = nova_v
             self.flag_tiro = False
-
+        forca = np.array([0,0])
         for planeta in self.planetas:
             x = planeta.rect.x
             y = planeta.rect.y
