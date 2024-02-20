@@ -19,23 +19,15 @@ def fps(self):
 class Jogo:
     def __init__(self):
         self.sprites = pygame.sprite.Group()
+        self.planetas = pygame.sprite.Group()
         self.alvo = pygame.sprite.Group()
-        self.planeta = pygame.sprite.Group()
-
         self.assets, self.state, self.window = Jogo.inicializa(self)
-        self.jogador = Jogador(self.alvo)
-
+        self.jogador = Jogador(self.planetas)
         estrelas = Estrela(50)
         self.lista_estrelas = estrelas.gera_estrelas()
-
-        coord_alvo = [[600, 400]]
+        coord_estrelas = [[600, 400]]
         for i in range(1):
-            Alvo(self.sprites, self.alvo, coord_alvo[i][0], coord_alvo[i][1])
-
-        coord_planeta = [[300, 300], [500, 200]]
-        for i in range(2):
-            Planeta(self.sprites, self.planeta, coord_planeta[i][0], coord_planeta[i][1])
-        
+            Planeta(self.sprites, self.planetas, coord_estrelas[i][0], coord_estrelas[i][1])
         self.sprites.add(self.jogador)
 
         fonte = pygame.font.get_default_font()
@@ -64,7 +56,7 @@ class Jogo:
             if event.type == pygame.KEYUP and event.key == pygame.K_DOWN:
                 self.jogador.vel_y-=velocidade
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-                Tiro(self.sprites, self.alvo, self.jogador, self.jogador.rect.x + 50, self.jogador.rect.y + 25, self.vel, self.state, self.planeta)
+                Tiro(self.sprites, self.planetas, self.jogador, self.jogador.rect.x + 50, self.jogador.rect.y + 25, self.vel, self.state)
             if event.type == pygame.KEYDOWN and event.key == pygame.K_e:
                 if self.vel < 3.0:
                     self.vel += 0.1             
@@ -121,11 +113,6 @@ class Jogo:
         texto_fps = fps(self)
         self.window.blit(texto_fps,(w - 130,h - 20))
 
-        fonte = pygame.font.get_default_font()
-        fonte = pygame.font.Font(fonte,12)
-        coracao = self.fonte.render(chr(9829) * self.jogador.vidas, True, (255,0,0))
-        self.window.blit(coracao, (10,10))
-
         pos = pygame.mouse.get_pos()
         if pos[0] < 300 and pos[1] < self.jogador.rect.y + 100 and pos[1] > self.jogador.rect.y - 100:  
             pygame.draw.line(self.window, (255,255,255), (self.jogador.rect.x + 50,self.jogador.rect.y + 25), (pos[0], pos[1]))
@@ -156,24 +143,17 @@ class Jogo:
 class TelaJogo2:
     def __init__(self, window, tela, assets, state):      
         self.sprites = pygame.sprite.Group()
-        self.alvo = pygame.sprite.Group()
-        self.planeta = pygame.sprite.Group()
+        self.planetas = pygame.sprite.Group()
         self.assets = assets
         self.state = state
        
+        coord_estrelas = [[500, 200], [480, 500], [700, 350]]
+        for i in range(3):
+            Planeta(self.sprites, self.planetas, coord_estrelas[i][0], coord_estrelas[i][1])
         estrelas = Estrela(50)
         self.lista_estrelas = estrelas.gera_estrelas()
-
-        self.jogador = Jogador(self.alvo)
+        self.jogador = Jogador(self.planetas)
         self.sprites.add(self.jogador)
-
-        coord_estrelas = [[500, 200]]
-        Alvo(self.sprites, self.alvo, coord_estrelas[0][0], coord_estrelas[0][1])
-
-        coord_planeta = [[300, 300], [500, 200]]
-        for i in range(2):
-            Planeta(self.sprites, self.planeta, coord_planeta[i][0], coord_planeta[i][1])
-
         
         fonte = pygame.font.get_default_font()
         self.fonte = pygame.font.Font(fonte, 12)
@@ -198,7 +178,7 @@ class TelaJogo2:
             if event.type == pygame.KEYUP and event.key == pygame.K_DOWN:
                 self.jogador.vel_y-=velocidade
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-                Tiro(self.sprites, self.alvo, self.jogador, self.jogador.rect.x + 50, self.jogador.rect.y + 25, self.vel, self.state, self.planeta)
+                Tiro(self.sprites, self.planetas, self.jogador, self.jogador.rect.x + 50, self.jogador.rect.y + 25, self.vel, self.state)
             if event.type == pygame.KEYDOWN and event.key == pygame.K_e:
                 if self.vel < 3.0:
                     self.vel += 0.1             
@@ -267,29 +247,9 @@ class Jogador(pygame.sprite.Sprite):
 
 
 
-
-class Planeta(pygame.sprite.Sprite):
-    def __init__(self, sprites, planeta,  x, y):
-        pygame.sprite.Sprite.__init__(self)
-      
-        img_planeta1 = pygame.image.load("imagens/planeta1.png")
-        image1 = pygame.transform.scale(img_planeta1,(128,128))
-        img_planeta2 = pygame.image.load("imagens/planeta2.png")
-        image2 = pygame.transform.scale(img_planeta2,(128,128))
-        imagens = [image1, image2]
-        self.image = imagens[randint(0,1)]
-        self.rect = self.image.get_rect()
-        self.rect.x = x
-        self.rect.y = y
-        sprites.add(self)
-        planeta.add(self)
-    # def update(self, delta_t):
-    #     lista = pygame.sprite.spritecollide(self, self.tiro, True)
-        
-
-
-class Tiro(pygame.sprite.Sprite):   
-    def __init__(self, sprites, alvo, jogador, x, y, vel, state, planeta):
+class Tiro(pygame.sprite.Sprite):
+    
+    def __init__(self, sprites, planetas, jogador, x, y, vel, state):
         super().__init__()
         self.velo = vel
         self.state = state
@@ -298,14 +258,13 @@ class Tiro(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
-        self.planetas = planeta
 
         self.initial_v = np.array([1, -1])
         self.vel_y_laser = 10
         self.vel_x_laser = 10  # Valor original ajustado para não causar confusão
 
         self.flag_tiro = True
-        self.alvo = alvo
+        self.planetas = planetas
         
         sprites.add(self)
         self.sprites = sprites
@@ -322,27 +281,19 @@ class Tiro(pygame.sprite.Sprite):
             nova_v = (posicao_mouse - posicao_atual) * x * 2
             self.initial_v = nova_v
             self.flag_tiro = False
-
         forca = np.array([0,0])
-        soma_no_x = 0
-        soma_no_y = 0
-
         for planeta in self.planetas:
             x = planeta.rect.x
             y = planeta.rect.y
-            
             tamanho_vetor_horizontal = x - self.rect.x
             tamanho_vetor_vertical = y - self.rect.y
             vetor = np.array([tamanho_vetor_horizontal, tamanho_vetor_vertical])
             vetor  = vetor / np.linalg.norm(vetor)
             forca = vetor*(5000/ (tamanho_vetor_horizontal**2 + tamanho_vetor_vertical**2)**0.5)
-            soma_no_x += forca[0]
-            soma_no_y += forca[1]
-
-        self.rect.x += self.initial_v[0] + soma_no_x/50
-        self.rect.y += self.initial_v[1] + soma_no_y/50    
-        
+            
         # Atualiza a posição com base na nova velocidade e aceleração
+        self.rect.x += self.initial_v[0] + forca[0]/100
+        self.rect.y += self.initial_v[1] + forca[1]/100
         
 
         # Verifica se o tiro saiu da tela ou atingiu um planeta
@@ -350,34 +301,33 @@ class Tiro(pygame.sprite.Sprite):
             self.flag_tiro = True
             self.sprites.remove(self)
     
-        lista = pygame.sprite.spritecollide(self, self.alvo, True)
+        lista = pygame.sprite.spritecollide(self, self.planetas, True)
         if self.state["flag_tela2"]:
             for planeta in lista:
                 self.sprites.remove(self)
-                self.alvo.empty()
+                self.planetas.empty()
                 self.state["flag_tela2"] = False
         else:
             for planeta in lista:
-                self.alvo.empty()
+                self.planetas.empty()
                 self.flag_tiro = True
                 self.state["flag_tela2"] = True
 
-        lista = pygame.sprite.spritecollide(self, self.planetas, True)
-        for planeta in lista:
-            print(lista)
-            self.sprites.remove(self)
-
-
-class Alvo(pygame.sprite.Sprite):
-    def __init__(self, sprites, alvo, x, y):
+class Planeta(pygame.sprite.Sprite):
+    def __init__(self, sprites, planetas, x, y):
         pygame.sprite.Sprite.__init__(self)
-        img = pygame.image.load("imagens/alvo.png")
-        self.image = pygame.transform.scale(img,(100,100))
+
+        img_planeta1 = pygame.image.load("imagens/planeta1.png")
+        image1 = pygame.transform.scale(img_planeta1,(128,128))
+        img_planeta2 = pygame.image.load("imagens/planeta2.png")
+        image2 = pygame.transform.scale(img_planeta2,(128,128))
+        lista_planetas = [image1, image2]
+        self.image = lista_planetas[randint(0,1)]
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
         sprites.add(self)
-        alvo.add(self)
+        planetas.add(self)
 
 class Estrela:
     def __init__(self, quant_estrelas):
