@@ -1,3 +1,3 @@
-from app import *
-
-Jogo()
+from main import *
+  
+Jogo()  
