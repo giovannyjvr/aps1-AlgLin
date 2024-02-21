@@ -396,7 +396,9 @@ class Tiro(pygame.sprite.Sprite):
         for alvo in lista:
             self.sprites.remove(self)
             self.state["flag_tela2"] = True
-
+        lista = pygame.sprite.spritecollide(self, self.planetas, False)
+        for planeta in lista:
+            self.sprites.remove(self)
             
         if self.rect.x > 790 or self.rect.x < 0 or self.rect.y > 600 or self.rect.y < 0:
             self.kill()
