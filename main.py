@@ -32,9 +32,9 @@ class Jogo:
         for i in range(1):
             Alvo(self.sprites, self.alvo, coord_alvo[i][0], coord_alvo[i][1])
 
-        coord_planeta = [[300, 300], [500, 200]]
-        for i in range(2):
-            Planeta(self.sprites, self.planeta, coord_planeta[i][0], coord_planeta[i][1])
+        coord_planeta = [[400, 400]]
+        for i in range(1):
+            Planeta(self.sprites, self.planeta, coord_planeta[0][0], coord_planeta[0][1])
         
         self.sprites.add(self.jogador)
 
@@ -64,7 +64,7 @@ class Jogo:
             if event.type == pygame.KEYUP and event.key == pygame.K_DOWN:
                 self.jogador.vel_y-=velocidade
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-                Tiro(self.sprites, self.alvo, self.jogador, self.jogador.rect.x + 50, self.jogador.rect.y + 25, self.vel, self.state, self.planeta)
+                Tiro(self.sprites, self.alvo, self.jogador, self.jogador.rect.x + 100, self.jogador.rect.y + 40, self.vel, self.state, self.planeta)
             if event.type == pygame.KEYDOWN and event.key == pygame.K_e:
                 if self.vel < 3.0:
                     self.vel += 0.1             
@@ -123,12 +123,10 @@ class Jogo:
 
         fonte = pygame.font.get_default_font()
         fonte = pygame.font.Font(fonte,12)
-        coracao = self.fonte.render(chr(9829) * self.jogador.vidas, True, (255,0,0))
-        self.window.blit(coracao, (10,10))
 
         pos = pygame.mouse.get_pos()
-        if pos[0] < 300 and pos[1] < self.jogador.rect.y + 100 and pos[1] > self.jogador.rect.y - 100:  
-            pygame.draw.line(self.window, (255,255,255), (self.jogador.rect.x + 50,self.jogador.rect.y + 25), (pos[0], pos[1]))
+        if pos[0] < 250 and pos[1] < self.jogador.rect.y + 200 and pos[1] > self.jogador.rect.y - 100:  
+            pygame.draw.line(self.window, (255,255,255), (self.jogador.rect.x + 120,self.jogador.rect.y +60), (pos[0], pos[1]))
         
         self.sprites.draw(self.window)
         pygame.display.update()
@@ -200,11 +198,12 @@ class TelaJogo2:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 Tiro(self.sprites, self.alvo, self.jogador, self.jogador.rect.x + 50, self.jogador.rect.y + 25, self.vel, self.state, self.planeta)
             if event.type == pygame.KEYDOWN and event.key == pygame.K_e:
-                if self.vel < 3.0:
-                    self.vel += 0.1             
+                if self.vel < 3.5:
+                    self.vel += 0.3             
             if event.type == pygame.KEYDOWN and event.key == pygame.K_q:
-                if self.vel >0.4 :
-                    self.vel -= 0.1
+                if self.vel > 1.3:
+                    self.vel -= 0.3
+
         ultimo_tempo = self.state["last_updated"]
         tempo = pygame.time.get_ticks()
         delta_t = (tempo-ultimo_tempo)/1000
@@ -224,8 +223,8 @@ class TelaJogo2:
         self.window.blit(texto_fps,(w - 130,h - 20))
 
         pos = pygame.mouse.get_pos()
-        if pos[0] < 300 and pos[1] < self.jogador.rect.y + 100 and pos[1] > self.jogador.rect.y - 100:  
-            pygame.draw.line(self.window, (255,255,255), (self.jogador.rect.x + 50,self.jogador.rect.y + 25), (pos[0], pos[1]))
+        if pos[0] < 250 and pos[1] < self.jogador.rect.y + 200 and pos[1] > self.jogador.rect.y - 100:  
+            pygame.draw.line(self.window, (255,255,255), (self.jogador.rect.x + 120,self.jogador.rect.y +60), (pos[0], pos[1]))
         
         self.sprites.draw(self.window)
         pygame.display.update()
@@ -251,21 +250,31 @@ class Jogador(pygame.sprite.Sprite):
         self.vidas = 3
 
     def update(self, delta_t):
-        # Obtenha a posição do mouse
-        mouse_x, mouse_y = pygame.mouse.get_pos()
-        # Calcule o vetor da posição do jogador para a posição do mouse
-        vetor_x = mouse_x - self.rect.x
-        vetor_y = mouse_y - self.rect.y
-        # Calcule o ângulo entre o vetor e o eixo x usando arctan2
-        angulo_rad = np.arctan2(vetor_y, vetor_x)
-        # Converta o ângulo de radianos para graus
-        angulo_deg = np.degrees(angulo_rad)
-        # Rotacione a imagem original do jogador
-        self.image = pygame.transform.rotate(self.image_original, -angulo_deg)
-        # Atualize a posição do jogador
-        self.rect = self.image.get_rect(center=self.rect.center)
-
-
+        # # Obtenha a posição do mouse
+        # mouse_x, mouse_y = pygame.mouse.get_pos()
+        # # Calcule o vetor da posição do jogador para a posição do mouse
+        # vetor_x = mouse_x - self.rect.x
+        # vetor_y = mouse_y - self.rect.y
+        # # Calcule o ângulo entre o vetor e o eixo x usando arctan2
+        # angulo_rad = np.arctan2(vetor_y, vetor_x)
+        # # Converta o ângulo de radianos para graus
+        # angulo_deg = np.degrees(angulo_rad)
+        # # Rotacione a imagem original do jogador
+        # self.image = pygame.transform.rotate(self.image_original, -angulo_deg)
+        # # Atualize a posição do jogador
+        # self.rect = self.image.get_rect(center=self.rect.center)
+        
+        self.rect.x = (self.rect.x + self.vel_x*delta_t) 
+        self.rect.y = (self.rect.y + self.vel_y*delta_t)
+    
+        if self.rect.x + self.rect.width >= 640:
+            self.rect.x = 640 - self.rect.width
+        if self.rect.x  < 0:
+            self.rect.x = 0
+        if self.rect.y + self.rect.height >= 600:
+            self.rect.y = 600 - self.rect.height
+        if self.rect.y < 0:
+            self.rect.y = 0
 
 
 class Planeta(pygame.sprite.Sprite):
@@ -287,22 +296,22 @@ class Planeta(pygame.sprite.Sprite):
     #     lista = pygame.sprite.spritecollide(self, self.tiro, True)
         
 
-
-class Tiro(pygame.sprite.Sprite):   
+class Tiro(pygame.sprite.Sprite):
     def __init__(self, sprites, alvo, jogador, x, y, vel, state, planeta):
         super().__init__()
         self.velo = vel
         self.state = state
         img_laser = pygame.image.load('imagens/tiroe.png')
-        self.image = pygame.transform.scale(img_laser, (50, 50))
+        self.original_image = pygame.transform.scale(img_laser, (50, 50))
+        self.image = self.original_image
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
         self.planetas = planeta
 
-        self.initial_v = np.array([1, -1])
-        self.vel_y_laser = 10
-        self.vel_x_laser = 10  # Valor original ajustado para não causar confusão
+        self.initial_v = np.array([5, -5])
+        self.vel_y_laser = 15
+        self.vel_x_laser = 15  # Valor original ajustado para não causar confusão
 
         self.flag_tiro = True
         self.alvo = alvo
@@ -310,63 +319,53 @@ class Tiro(pygame.sprite.Sprite):
         sprites.add(self)
         self.sprites = sprites
 
-        
-
     def update(self, delta_t):
-        # Preciso fazer com que os tiros andem na direção do mouse
         if self.flag_tiro:
             posicao_mouse = pygame.mouse.get_pos()
             posicao_atual = np.array([self.rect.x, self.rect.y])
             mod = np.linalg.norm(posicao_mouse - posicao_atual)
             x = 1 / mod
-            nova_v = (posicao_mouse - posicao_atual) * x * 2
+            nova_v = (posicao_mouse - posicao_atual) * x * 2.5
             self.initial_v = nova_v
             self.flag_tiro = False
-
-        forca = np.array([0,0])
-        soma_no_x = 0
-        soma_no_y = 0
-
+        
+        C = 4000
+        aceleracoes = []
+        angulos = []
+        
         for planeta in self.planetas:
-            x = planeta.rect.x
-            y = planeta.rect.y
-            
-            tamanho_vetor_horizontal = x - self.rect.x
-            tamanho_vetor_vertical = y - self.rect.y
-            vetor = np.array([tamanho_vetor_horizontal, tamanho_vetor_vertical])
-            vetor  = vetor / np.linalg.norm(vetor)
-            forca = vetor*(5000/ (tamanho_vetor_horizontal**2 + tamanho_vetor_vertical**2)**0.5)
-            soma_no_x += forca[0]
-            soma_no_y += forca[1]
+            distancia = np.sqrt((self.rect.x - planeta.rect.x)**2 + (self.rect.y - planeta.rect.y)**2)
+            aceleracao = C / distancia**2
+            aceleracoes.append(aceleracao)
+            angulo = np.arctan2(planeta.rect.y - self.rect.y, planeta.rect.x - self.rect.x)
+            angulos.append(angulo)
+        ax = 0
+        ay = 0
+        for i in range(len(aceleracoes)):
+            ax += aceleracoes[i]*np.cos(angulos[i])/4
+            ay += aceleracoes[i]*np.sin(angulos[i])/4
 
-        self.rect.x += self.initial_v[0] + soma_no_x/50
-        self.rect.y += self.initial_v[1] + soma_no_y/50    
+        if ax > 1:
+            ax = 1
+        if ax < -1:
+            ax = -1
+        if ay > 1:
+            ay = 1
+        if ay < -1:
+            ay = -1
         
-        # Atualiza a posição com base na nova velocidade e aceleração
-        
+        self.initial_v += np.array([ax, ay])
+        self.rect.x += self.initial_v[0] * self.velo
+        self.rect.y += self.initial_v[1] * self.velo
 
-        # Verifica se o tiro saiu da tela ou atingiu um planeta
-        if self.rect.x > 800 or self.rect.y > 600 or self.rect.y < 0:
-            self.flag_tiro = True
-            self.sprites.remove(self)
-    
         lista = pygame.sprite.spritecollide(self, self.alvo, True)
-        if self.state["flag_tela2"]:
-            for planeta in lista:
-                self.sprites.remove(self)
-                self.alvo.empty()
-                self.state["flag_tela2"] = False
-        else:
-            for planeta in lista:
-                self.alvo.empty()
-                self.flag_tiro = True
-                self.state["flag_tela2"] = True
-
-        lista = pygame.sprite.spritecollide(self, self.planetas, True)
-        for planeta in lista:
-            print(lista)
+        for alvo in lista:
             self.sprites.remove(self)
+            self.state["flag_tela2"] = True
 
+            
+        if self.rect.x > 790 or self.rect.x < 0 or self.rect.y > 600 or self.rect.y < 0:
+            self.kill()
 
 class Alvo(pygame.sprite.Sprite):
     def __init__(self, sprites, alvo, x, y):
