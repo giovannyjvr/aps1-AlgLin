@@ -1,3 +1,3 @@
 from main import *
   
-Jogo()       
+Jogo()         
