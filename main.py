@@ -296,6 +296,10 @@ class Tiro(pygame.sprite.Sprite):
             aceleracoes.append(aceleracao)
             angulo = np.arctan2(planeta.rect.y - self.rect.y, planeta.rect.x - self.rect.x)
             angulos.append(angulo)
+            centro_planeta = planeta.rect.x +64, planeta.rect.y+64
+            if abs(planeta.rect.x - self.rect.x) < 20 and abs(self.rect.y - planeta.rect.y) < 20:
+                print(abs(planeta.rect.x  - self.rect.x), abs(self.rect.y - planeta.rect.y))
+                self.kill()
         ax = 0
         ay = 0
         for i in range(len(aceleracoes)):
@@ -319,10 +323,7 @@ class Tiro(pygame.sprite.Sprite):
         for alvo in lista:
             self.sprites.remove(self)
             state["flag_tela2"] = True
-        # lista = pygame.sprite.spritecollide(self, self.planetas, False)
-        # for planeta in lista:
-        #     self.sprites.remove(self)
-            
+
         if self.rect.x > 790 or self.rect.x < 0 or self.rect.y > 600 or self.rect.y < 0:
             self.kill()
 
