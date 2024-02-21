@@ -16,6 +16,8 @@ assets = {
     "fonte": "font/PressStart2P.ttf",
     "musica_tocando": False,
     "tela": "tela_inicial",
+    "coord_alvo_1": [[600, 400]],
+    "coord_planetas_1": [[400, 400]],
     "coord_alvo_2": [[500, 200]],
     "coord_planetas_2": [[300, 300], [500, 200]]
     

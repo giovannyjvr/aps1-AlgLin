@@ -5,30 +5,9 @@ import numpy as np
 import math
 from assets import *
 from state import *
-
-def imprime(self,texto,fonte,cor,x,y):
-    texto = fonte.render(f"{texto}", True, cor)
-    self.window.blit(texto, (x, y))
-
-def contorno(self,texto,fonte,cor,x,y,cor_contorno):
-    imprime(self,texto, fonte, cor_contorno,(x-1),(y+1))
-    imprime(self,texto, fonte, cor_contorno,(x-1),(y-1))
-    imprime(self,texto, fonte, cor_contorno,(x+1),(y+1))
-    imprime(self,texto, fonte, cor_contorno,(x+1),(y-1))
-    imprime(self,texto, fonte, cor,(x),(y))
+from funcoes import *
 
 
-def fps(self):
-    fonte = assets["fonte"]
-    fonte = pygame.font.Font(fonte,12)
-    fps = 0
-    t0 = state["t0"]
-    t1 = pygame.time.get_ticks()
-    if t0 > 0:
-        fps = 1000/(t1 - t0)
-    state["t0"] = t1
-    texto_fps = fonte.render(f'fps: {fps:.2f}', True, (255,255,255))
-    return texto_fps
 
 def last_update(self):
         ultimo_tempo = state["last_updated"]
@@ -49,13 +28,13 @@ class Jogo:
         estrelas = Estrela(50)
         self.lista_estrelas = estrelas.gera_estrelas()
 
-        coord_alvo = [[600, 400]]
-        for i in range(1):
+        coord_alvo = assets["coord_alvo_1"]
+        for i in range(len(coord_alvo)):
             Alvo(self.sprites, self.alvo, coord_alvo[i][0], coord_alvo[i][1])
 
-        coord_planeta = [[400, 400]]
-        for i in range(1):
-            Planeta(self.sprites, self.planeta, coord_planeta[0][0], coord_planeta[0][1])
+        coord_planeta = assets["coord_planetas_1"]
+        for i in range(len(coord_planeta)):
+            Planeta(self.sprites, self.planeta, coord_planeta[i][0], coord_planeta[i][1])
         
         self.sprites.add(self.jogador)
 
