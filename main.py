@@ -339,9 +339,11 @@ class Tiro(pygame.sprite.Sprite):
             aceleracoes.append(aceleracao)
             angulo = np.arctan2(planeta.rect.y - self.rect.y, planeta.rect.x - self.rect.x)
             angulos.append(angulo)
-
-        ax = aceleracoes[0]*np.cos(angulos[0])/4
-        ay = aceleracoes[0]*np.sin(angulos[0])/4
+        ax = 0
+        ay = 0
+        for i in range(len(aceleracoes)):
+            ax += aceleracoes[i]*np.cos(angulos[i])/4
+            ay += aceleracoes[i]*np.sin(angulos[i])/4
 
         if ax > 1:
             ax = 1
