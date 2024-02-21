@@ -4,6 +4,18 @@ import pygame
 import numpy as np
 import math
 
+def imprime(self,texto,fonte,cor,x,y):
+    texto = fonte.render(f"{texto}", True, cor)
+    self.window.blit(texto, (x, y))
+
+def contorno(self,texto,fonte,cor,x,y,cor_contorno):
+    imprime(self,texto, fonte, cor_contorno,(x-1),(y+1))
+    imprime(self,texto, fonte, cor_contorno,(x-1),(y-1))
+    imprime(self,texto, fonte, cor_contorno,(x+1),(y+1))
+    imprime(self,texto, fonte, cor_contorno,(x+1),(y-1))
+    imprime(self,texto, fonte, cor,(x),(y))
+
+
 def fps(self):
     fonte = self.assets["fonte"]
     fonte = pygame.font.Font(fonte,12)
@@ -411,11 +423,38 @@ class TelaInicial:
     
     def desenha(self):
         fonte = pygame.font.get_default_font()
-        fonte = pygame.font.Font(fonte, 24)
-        self.window.fill((255,255,255))
-        self.texto = fonte.render("clique em qualquer botao", True, (0,0,0))
+        fonte_titulo = pygame.font.Font(fonte, 34)
+        fonte_24 = pygame.font.Font(fonte, 24)
+        fonte_26 = pygame.font.Font(fonte, 42)
+        fonte = pygame.font.Font(fonte, 40)
+
+        # self.window.fill((255,255,255))
+        fundo = pygame.image.load("imagens/fundo_inicial.jpg")
+        fundo = pygame.transform.scale(fundo, (800,600))
+        self.window.blit(fundo, (0,0))
+
+        # pygame.draw.rect(self.window, (255, 0, 0), (0, 390, 250, 410))
         
-        self.window.blit(self.texto, (200, 240))
+        contorno(self, "Ovni Wars", fonte_titulo, (0,0,0),300,50, (255,255,255))
+
+        contorno(self, "Aperte 'Espaço'", fonte, (255,0,0),265,201,(0,0,0))
+        contorno(self, "para iniciar", fonte, (255,0,0),270,241,(0,0,0))
+        # imprime(self, "cliquem em qualquer botão", fonte, (255,0,0),150,200)
+        # imprime(self, "para iniciar", fonte, (255,0,0),150,240)
+
+        contorno(self, "Instruções:", fonte_titulo, (255,255,0),5,360,(0,0,0))
+        contorno(self, "(Q) para diminuir a", fonte_24, (0,0,0),5,400,(255,255,255))
+        contorno(self, "velocidade do tiro", fonte_24, (0,0,0),5,425,(255,255,255))
+        contorno(self,"(E) para aumentar a",fonte_24,(0,0,0), 5,460,(255,255,255))
+        contorno(self,"velocidade do tiro",fonte_24,(0,0,0), 5,485,(255,255,255))
+        contorno(self,"(↑)(↓) para mexer",fonte_24,(0,0,0), 5,525,(255,255,255))
+        contorno(self,"a nave",fonte_24,(0,0,0), 5,550,(255,255,255))
+
+
+
+
+
+
         pygame.display.update()
 
 class TelaGameOver:
@@ -433,10 +472,29 @@ class TelaGameOver:
         return "tela_over"
     
     def desenha(self):
-        fonte = pygame.font.get_default_font()
-        fonte = pygame.font.Font(fonte, 24)
-        self.window.fill((255,255,255))
-        self.texto = fonte.render("Você perdeu", True, (0,0,0))
-        self.window.blit(self.texto, (260, 240))
+        fonte_geral = pygame.font.get_default_font()
+        fonte = pygame.font.Font(fonte_geral, 44)
+        fonte2 = pygame.font.Font(fonte_geral, 24)
+        # fonte2.set_bold(True)
+
+        # self.window.fill((255,255,255))
+        fundo = pygame.image.load("imagens/fundo_final.jpg")
+        fundo = pygame.transform.scale(fundo, (800,600))
+        self.window.blit(fundo, (0,0))
+
+        # self.texto = fonte.render("Você perdeu", True, (255,255,255))
+        # self.window.blit(self.texto, (290, 50))
+        imprime(self,"Você perdeu",fonte,(255,255,255), 290, 50)
+
+
+        textinho = "testandoooooo"
+        imprime(self,textinho,fonte2,(0,0,255), 20, 40)
+
+        self.texto = fonte2.render("Sua pontuação foi: ", True, (255,255,0))
+        self.window.blit(self.texto, (100, 130))
+        self.texto = fonte2.render("ZZZ", True, (255,0,0))
+        self.window.blit(self.texto, (100, 160))
+
+
         pygame.display.update()
 
