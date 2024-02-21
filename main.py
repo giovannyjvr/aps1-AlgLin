@@ -64,7 +64,9 @@ class Jogo:
             if event.type == pygame.KEYUP and event.key == pygame.K_DOWN:
                 self.jogador.vel_y-=velocidade
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-                Tiro(self.sprites, self.alvo, self.jogador, self.jogador.rect.x + 100, self.jogador.rect.y + 40, self.vel, self.planeta)
+                pos = pygame.mouse.get_pos()
+                if pos[0] < 250 and pos[1] < self.jogador.rect.y + 200 and pos[1] > self.jogador.rect.y - 100:
+                    Tiro(self.sprites, self.alvo, self.jogador, self.jogador.rect.x + 100, self.jogador.rect.y + 40, self.vel, self.planeta)
             if event.type == pygame.KEYDOWN and event.key == pygame.K_e:
                 if self.vel < 3.0:
                     self.vel += 0.1             
@@ -73,8 +75,6 @@ class Jogo:
                     self.vel -= 0.1
         last_update(self)
         return "tela_jogo"
-
-    
 
     def inicializa(self):
         pygame.init()
@@ -113,7 +113,9 @@ class Jogo:
             "tela_inicial": TelaInicial(self.window, self.tela),
             "tela_jogo": self,
             "tela_jogo2": TelaJogo2(self.window, self.tela),
-            "tela_over": TelaGameOver(self.window, self.tela)
+            "tela_over": TelaGameOver(self.window, self.tela),
+            "tela_jogo3": TelaJogo3(self.window, self.tela),
+            "tela_jogo4": TelaJogo4(self.window, self.tela)
         }
 
         tela_atual = telas[self.tela]
@@ -123,10 +125,15 @@ class Jogo:
                 break
             if state["flag_tela2"]:
                 self.tela = "tela_jogo2"
+            if state["flag_tela3"]:
+                self.tela = "tela_jogo3"
+            if state["flag_tela4"]:
+                self.tela = "tela_jogo4"
             tela_atual = telas[self.tela]
             tela_atual.desenha()
 
 class TelaJogo2:
+
     def __init__(self, window, tela):      
         self.sprites = pygame.sprite.Group()
         self.alvo = pygame.sprite.Group()
@@ -171,7 +178,9 @@ class TelaJogo2:
             if event.type == pygame.KEYUP and event.key == pygame.K_DOWN:
                 self.jogador.vel_y-=velocidade
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-                Tiro(self.sprites, self.alvo, self.jogador, self.jogador.rect.x + 50, self.jogador.rect.y + 25, self.vel, self.planeta)
+                pos = pygame.mouse.get_pos()
+                if pos[0] < 250 and pos[1] < self.jogador.rect.y + 200 and pos[1] > self.jogador.rect.y - 100:
+                    Tiro(self.sprites, self.alvo, self.jogador, self.jogador.rect.x + 100, self.jogador.rect.y + 40, self.vel, self.planeta)
             if event.type == pygame.KEYDOWN and event.key == pygame.K_e:
                 if self.vel < 3.5:
                     self.vel += 0.3             
@@ -199,7 +208,159 @@ class TelaJogo2:
         
         self.sprites.draw(self.window)
         pygame.display.update()
+
+class TelaJogo3:
+    def __init__(self, window, tela):      
+        self.sprites = pygame.sprite.Group()
+        self.alvo = pygame.sprite.Group()
+        self.planeta = pygame.sprite.Group()
+
        
+        estrelas = Estrela(50)
+        self.lista_estrelas = estrelas.gera_estrelas()
+
+        self.jogador = Jogador(self.alvo)
+        self.sprites.add(self.jogador)
+
+        coord_alvo = assets["coord_alvo_3"]
+        Alvo(self.sprites, self.alvo, coord_alvo[0][0], coord_alvo[0][1])
+
+        coord_planeta = assets["coord_planetas_3"]
+        for i in range(len(coord_planeta)):
+            Planeta(self.sprites, self.planeta, coord_planeta[i][0], coord_planeta[i][1])
+
+        
+        
+        self.fonte = pygame.font.Font(assets["fonte_padrao"], 12)
+        self.tela = tela
+        
+        self.flag_tiro = False
+        state["vel"] = 1
+        self.vel = state["vel"]
+        self.window = window 
+
+    def recebe_eventos(self):
+        velocidade = 400
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT or state["flag_tela3"] == False:
+                return "tela_over"
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_UP:
+                self.jogador.vel_y-=velocidade
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_DOWN:
+                self.jogador.vel_y+=velocidade
+            if event.type == pygame.KEYUP and event.key == pygame.K_UP:
+                self.jogador.vel_y+=velocidade
+            if event.type == pygame.KEYUP and event.key == pygame.K_DOWN:
+                self.jogador.vel_y-=velocidade
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                pos = pygame.mouse.get_pos()
+                if pos[0] < 250 and pos[1] < self.jogador.rect.y + 200 and pos[1] > self.jogador.rect.y - 100:
+                    Tiro(self.sprites, self.alvo, self.jogador, self.jogador.rect.x + 100, self.jogador.rect.y + 40, self.vel, self.planeta)
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_e:
+                if self.vel < 3.5:
+                    self.vel += 0.3             
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_q:
+                if self.vel >1.3 :
+                    self.vel -= 0.3
+
+        last_update(self)
+        return "tela_jogo3"
+
+    def desenha(self):
+        self.window.fill((0,0,0))
+        self.window.blit(assets["fundo2"], (0,0))
+
+        for cada_lista in self.lista_estrelas:
+            pygame.draw.circle(self.window,(255,255,255), (cada_lista[0],cada_lista[1]), cada_lista[2])
+
+        w, h = pygame.display.get_surface().get_size()
+        texto_fps = fps(self)
+        self.window.blit(texto_fps,(w - 130,h - 20))
+
+        pos = pygame.mouse.get_pos()
+        if pos[0] < 250 and pos[1] < self.jogador.rect.y + 200 and pos[1] > self.jogador.rect.y - 100:  
+            pygame.draw.line(self.window, (255,255,255), (self.jogador.rect.x + 120,self.jogador.rect.y +60), (pos[0], pos[1]))
+        
+        self.sprites.draw(self.window)
+        pygame.display.update()
+
+class TelaJogo4:
+    def __init__(self, window, tela):      
+        self.sprites = pygame.sprite.Group()
+        self.alvo = pygame.sprite.Group()
+        self.planeta = pygame.sprite.Group()
+
+       
+        estrelas = Estrela(50)
+        self.lista_estrelas = estrelas.gera_estrelas()
+
+        self.jogador = Jogador(self.alvo)
+        self.sprites.add(self.jogador)
+
+        coord_alvo = assets["coord_alvo_4"]
+        Alvo(self.sprites, self.alvo, coord_alvo[0][0], coord_alvo[0][1])
+
+        coord_planeta = assets["coord_planetas_4"]
+        for i in range(len(coord_planeta)):
+            Planeta(self.sprites, self.planeta, coord_planeta[i][0], coord_planeta[i][1])
+
+        
+        
+        self.fonte = pygame.font.Font(assets["fonte_padrao"], 12)
+        self.tela = tela
+        
+        self.flag_tiro = False
+        state["vel"] = 1
+        self.vel = state["vel"]
+        self.window = window 
+
+    def recebe_eventos(self):
+        velocidade = 400
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT or state["flag_tela4"] == False:
+                return "tela_over"
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_UP:
+                self.jogador.vel_y-=velocidade
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_DOWN:
+                self.jogador.vel_y+=velocidade
+            if event.type == pygame.KEYUP and event.key == pygame.K_UP:
+                self.jogador.vel_y+=velocidade
+            if event.type == pygame.KEYUP and event.key == pygame.K_DOWN:
+                self.jogador.vel_y-=velocidade
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                pos = pygame.mouse.get_pos()
+                if pos[0] < 250 and pos[1] < self.jogador.rect.y + 200 and pos[1] > self.jogador.rect.y - 100:
+                    Tiro(self.sprites, self.alvo, self.jogador, self.jogador.rect.x + 100, self.jogador.rect.y + 40, self.vel, self.planeta)
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_e:
+                if self.vel < 3.5:
+                    self.vel += 0.3             
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_q:
+                if self.vel >1.3 :
+                    self.vel -= 0.3
+
+        last_update(self)
+        return "tela_jogo4"
+
+    def desenha(self):
+        self.window.fill((0,0,0))
+        self.window.blit(assets["fundo2"], (0,0))
+
+        for cada_lista in self.lista_estrelas:
+            pygame.draw.circle(self.window,(255,255,255), (cada_lista[0],cada_lista[1]), cada_lista[2])
+
+        w, h = pygame.display.get_surface().get_size()
+        texto_fps = fps(self)
+        self.window.blit(texto_fps,(w - 130,h - 20))
+
+        pos = pygame.mouse.get_pos()
+        if pos[0] < 250 and pos[1] < self.jogador.rect.y + 200 and pos[1] > self.jogador.rect.y - 100:  
+            pygame.draw.line(self.window, (255,255,255), (self.jogador.rect.x + 120,self.jogador.rect.y +60), (pos[0], pos[1]))
+        
+        self.sprites.draw(self.window)
+        pygame.display.update()
+
 class Jogador(pygame.sprite.Sprite):
     def __init__(self, planetas):
         pygame.sprite.Sprite.__init__(self)
@@ -296,7 +457,6 @@ class Tiro(pygame.sprite.Sprite):
             aceleracoes.append(aceleracao)
             angulo = np.arctan2(planeta.rect.y - self.rect.y, planeta.rect.x - self.rect.x)
             angulos.append(angulo)
-            centro_planeta = planeta.rect.x +64, planeta.rect.y+64
             if abs(planeta.rect.x - self.rect.x) < 20 and abs(self.rect.y - planeta.rect.y) < 20:
                 print(abs(planeta.rect.x  - self.rect.x), abs(self.rect.y - planeta.rect.y))
                 self.kill()
@@ -319,10 +479,22 @@ class Tiro(pygame.sprite.Sprite):
         self.rect.x += self.initial_v[0] * self.velo
         self.rect.y += self.initial_v[1] * self.velo
 
-        lista = pygame.sprite.spritecollide(self, self.alvo, True)
-        for alvo in lista:
-            self.sprites.remove(self)
-            state["flag_tela2"] = True
+        if state["flag_tela2"] == False:
+            lista = pygame.sprite.spritecollide(self, self.alvo, True)
+            for alvo in lista:
+                self.sprites.remove(self)
+                state["flag_tela2"] = True
+        elif state["flag_tela3"] == False:
+            lista = pygame.sprite.spritecollide(self, self.alvo, True)
+            for alvo in lista:
+                self.sprites.remove(self)
+                state["flag_tela3"] = True
+        else:
+            lista = pygame.sprite.spritecollide(self, self.alvo, True)
+            for alvo in lista:
+                self.sprites.remove(self)
+                state["flag_tela4"] = True
+                
 
         if self.rect.x > 790 or self.rect.x < 0 or self.rect.y > 600 or self.rect.y < 0:
             self.kill()
