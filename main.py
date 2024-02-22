@@ -18,12 +18,16 @@ def last_update(self):
 
 class Jogo:
     def __init__(self):
+
         self.sprites = pygame.sprite.Group()
         self.alvo = pygame.sprite.Group()
         self.planeta = pygame.sprite.Group()
 
         self.window = Jogo.inicializa(self)
         self.jogador = Jogador(self.alvo)
+
+        self.fonte = assets["fonte_padrao"]
+        self.fonte_titulo = pygame.font.Font(self.fonte, 34)
 
         estrelas = Estrela(50)
         self.lista_estrelas = estrelas.gera_estrelas()
@@ -44,12 +48,18 @@ class Jogo:
         self.tela = "tela_inicial"
 
         self.flag_tiro = False
-        self.vel = state["vel"]
+        self.vel = 1.0
         self.window = assets["window"]
         self.game_loop()
+
+        self.fonte_vel = pygame.font.Font(assets["fonte_padrao"],12)
+        self.velocidade = f"{self.vel}"
+        self.velocidade = self.velocidade.split("0")
             
     
     def recebe_eventos(self):
+
+        contorno(self, self.vel,self.fonte_titulo, (255,255,255), 5,10,(0,0,0) )
         velocidade = 400
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -67,12 +77,15 @@ class Jogo:
                 pos = pygame.mouse.get_pos()
                 if pos[0] < 250 and pos[1] < self.jogador.rect.y + 200 and pos[1] > self.jogador.rect.y - 100:
                     Tiro(self.sprites, self.alvo, self.jogador, self.jogador.rect.x + 100, self.jogador.rect.y + 40, self.vel, self.planeta)
+                    piu_piu = carregar_audio("musicas\_Piu Piu Disparo_ Efecto de Sonido.mp3")
+                    reproduzir_audio(piu_piu, duracao=650)
+
             if event.type == pygame.KEYDOWN and event.key == pygame.K_e:
                 if self.vel < 3.0:
-                    self.vel += 0.1             
+                    self.vel += 0.3           
             if event.type == pygame.KEYDOWN and event.key == pygame.K_q:
-                if self.vel >0.4 :
-                    self.vel -= 0.1
+                if self.vel >1.3 :
+                    self.vel -= 0.3
         last_update(self)
         return "tela_jogo"
 
@@ -92,6 +105,7 @@ class Jogo:
         self.window.fill((0,0,0))
         self.window.blit(assets["fundo"], (0,0))
 
+
         for cada_lista in self.lista_estrelas:
             pygame.draw.circle(self.window,(255,255,255), (cada_lista[0],cada_lista[1]), cada_lista[2])
 
@@ -99,7 +113,10 @@ class Jogo:
         texto_fps = fps(self)
         self.window.blit(texto_fps,(w - 130,h - 20))
 
-        fonte = pygame.font.Font(assets["fonte_padrao"],12)
+        self.fonte_vel = pygame.font.Font(assets["fonte_padrao"],12)
+        self.velocidade = f"{self.vel}"
+        self.velocidade = self.velocidade.split("0")
+        contorno(self,self.velocidade[0],self.fonte_vel,(255,255,255),5,10,(0,0,0))
        
         pos = pygame.mouse.get_pos()
         if pos[0] < 250 and pos[1] < self.jogador.rect.y + 200 and pos[1] > self.jogador.rect.y - 100:  
@@ -139,7 +156,6 @@ class TelaJogo2:
         self.sprites = pygame.sprite.Group()
         self.alvo = pygame.sprite.Group()
         self.planeta = pygame.sprite.Group()
-
        
         estrelas = Estrela(50)
         self.lista_estrelas = estrelas.gera_estrelas()
@@ -154,14 +170,10 @@ class TelaJogo2:
         for i in range(len(coord_planeta)):
             Planeta(self.sprites, self.planeta, coord_planeta[i][0], coord_planeta[i][1])
 
-        
-        
         self.fonte = pygame.font.Font(assets["fonte_padrao"], 12)
         self.tela = tela
-        
         self.flag_tiro = False
-        state["vel"] = 1
-        self.vel = state["vel"]
+        self.vel = 1
         self.window = window 
 
     def recebe_eventos(self):
@@ -181,9 +193,11 @@ class TelaJogo2:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 pos = pygame.mouse.get_pos()
                 if pos[0] < 250 and pos[1] < self.jogador.rect.y + 200 and pos[1] > self.jogador.rect.y - 100:
+                    piu_piu = carregar_audio("musicas\_Piu Piu Disparo_ Efecto de Sonido.mp3")
+                    reproduzir_audio(piu_piu, duracao=650)
                     Tiro(self.sprites, self.alvo, self.jogador, self.jogador.rect.x + 100, self.jogador.rect.y + 40, self.vel, self.planeta)
             if event.type == pygame.KEYDOWN and event.key == pygame.K_e:
-                if self.vel < 3.5:
+                if self.vel < 3.0:
                     self.vel += 0.3             
             if event.type == pygame.KEYDOWN and event.key == pygame.K_q:
                 if self.vel >1.3 :
@@ -196,12 +210,20 @@ class TelaJogo2:
         self.window.fill((0,0,0))
         self.window.blit(assets["fundo2"], (0,0))
 
+        self.fonte_vel = pygame.font.Font(assets["fonte_padrao"],12)
+        self.velocidade = f"{self.vel}"
+        self.velocidade = self.velocidade.split("0")
+
+        contorno(self,self.velocidade[0],self.fonte_vel,(255,255,255),5,10,(0,0,0))
+
+
         for cada_lista in self.lista_estrelas:
             pygame.draw.circle(self.window,(255,255,255), (cada_lista[0],cada_lista[1]), cada_lista[2])
 
         w, h = pygame.display.get_surface().get_size()
         texto_fps = fps(self)
         self.window.blit(texto_fps,(w - 130,h - 20))
+        
 
         pos = pygame.mouse.get_pos()
         if pos[0] < 250 and pos[1] < self.jogador.rect.y + 200 and pos[1] > self.jogador.rect.y - 100:  
@@ -216,7 +238,7 @@ class TelaJogo3:
         self.alvo = pygame.sprite.Group()
         self.planeta = pygame.sprite.Group()
 
-       
+
         estrelas = Estrela(50)
         self.lista_estrelas = estrelas.gera_estrelas()
 
@@ -236,8 +258,7 @@ class TelaJogo3:
         self.tela = tela
         
         self.flag_tiro = False
-        state["vel"] = 1
-        self.vel = state["vel"]
+        self.vel = 1
         self.window = window 
 
     def recebe_eventos(self):
@@ -258,8 +279,10 @@ class TelaJogo3:
                 pos = pygame.mouse.get_pos()
                 if pos[0] < 250 and pos[1] < self.jogador.rect.y + 200 and pos[1] > self.jogador.rect.y - 100:
                     Tiro(self.sprites, self.alvo, self.jogador, self.jogador.rect.x + 100, self.jogador.rect.y + 40, self.vel, self.planeta)
+                    piu_piu = carregar_audio("musicas\_Piu Piu Disparo_ Efecto de Sonido.mp3")
+                    reproduzir_audio(piu_piu, duracao=650)
             if event.type == pygame.KEYDOWN and event.key == pygame.K_e:
-                if self.vel < 3.5:
+                if self.vel < 3.0:
                     self.vel += 0.3             
             if event.type == pygame.KEYDOWN and event.key == pygame.K_q:
                 if self.vel >1.3 :
@@ -271,6 +294,11 @@ class TelaJogo3:
     def desenha(self):
         self.window.fill((0,0,0))
         self.window.blit(assets["fundo3"], (0,0))
+
+        self.fonte_vel = pygame.font.Font(assets["fonte_padrao"],12)
+        self.velocidade = f"{self.vel}"
+        self.velocidade = self.velocidade.split("0")
+        contorno(self,self.velocidade[0],self.fonte_vel,(255,255,255),5,10,(0,0,0))
 
         for cada_lista in self.lista_estrelas:
             pygame.draw.circle(self.window,(255,255,255), (cada_lista[0],cada_lista[1]), cada_lista[2])
@@ -292,7 +320,7 @@ class TelaJogo4:
         self.alvo = pygame.sprite.Group()
         self.planeta = pygame.sprite.Group()
 
-       
+        
         estrelas = Estrela(50)
         self.lista_estrelas = estrelas.gera_estrelas()
 
@@ -312,8 +340,7 @@ class TelaJogo4:
         self.tela = tela
         
         self.flag_tiro = False
-        state["vel"] = 1
-        self.vel = state["vel"]
+        self.vel = 1
         self.window = window 
 
     def recebe_eventos(self):
@@ -334,8 +361,10 @@ class TelaJogo4:
                 pos = pygame.mouse.get_pos()
                 if pos[0] < 250 and pos[1] < self.jogador.rect.y + 200 and pos[1] > self.jogador.rect.y - 100:
                     Tiro(self.sprites, self.alvo, self.jogador, self.jogador.rect.x + 100, self.jogador.rect.y + 40, self.vel, self.planeta)
+                    piu_piu = carregar_audio("musicas\_Piu Piu Disparo_ Efecto de Sonido.mp3")
+                    reproduzir_audio(piu_piu, duracao=650)
             if event.type == pygame.KEYDOWN and event.key == pygame.K_e:
-                if self.vel < 3.5:
+                if self.vel < 3.0:
                     self.vel += 0.3             
             if event.type == pygame.KEYDOWN and event.key == pygame.K_q:
                 if self.vel >1.3 :
@@ -347,6 +376,13 @@ class TelaJogo4:
     def desenha(self):
         self.window.fill((0,0,0))
         self.window.blit(assets["fundo4"], (0,0))
+
+        self.fonte_vel = pygame.font.Font(assets["fonte_padrao"],12)
+        self.velocidade = f"{self.vel}"
+        self.velocidade = self.velocidade.split("0")
+        contorno(self,self.velocidade[0],self.fonte_vel,(255,255,255),5,10,(0,0,0))
+
+
 
         for cada_lista in self.lista_estrelas:
             pygame.draw.circle(self.window,(255,255,255), (cada_lista[0],cada_lista[1]), cada_lista[2])
@@ -545,6 +581,8 @@ class TelaInicial:
         pygame.init()
         self.window = window
         self.tela = tela
+        self.musica_fundo = carregar_audio("musicas/fundo_tela_inicial.mp3")
+        reproduzir_fundo(self.musica_fundo, loop = True)
         
 
     def recebe_eventos(self):
@@ -552,6 +590,9 @@ class TelaInicial:
             if evento.type == pygame.QUIT:
                 return False
             if evento.type == pygame.KEYDOWN:
+                pygame.mixer.stop() 
+                self.musica_fundo_jogo = carregar_audio("musicas/fundo_jogo.mp3")
+                reproduzir_fundo(self.musica_fundo_jogo, loop = True)
                 return "tela_jogo"
         return "tela_inicial"
     
@@ -559,7 +600,6 @@ class TelaInicial:
         fonte = assets["fonte_padrao"]
         fonte_titulo = pygame.font.Font(fonte, 34)
         fonte_24 = pygame.font.Font(fonte, 24)
-        fonte_26 = pygame.font.Font(fonte, 42)
         fonte = pygame.font.Font(fonte, 40)
 
         fundo = assets["fundo_inicial"]
