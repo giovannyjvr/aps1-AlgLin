@@ -65,12 +65,12 @@ class Jogo: #Classe que gera o jogo
                     reproduzir_audio(piu_piu, duracao=650)
             if event.type == pygame.KEYDOWN and event.key == pygame.K_e: #Aumenta a velocidade do tiro
                 if self.vel < 3.0:
-                    print("entrou")
                     self.vel = self.vel + 0.3
 
             if event.type == pygame.KEYDOWN and event.key == pygame.K_q:
                 if self.vel >= 1.3 :
                     self.vel -= 0.3
+                    
         last_update(self)
         return "tela_jogo"
 

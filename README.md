@@ -55,3 +55,9 @@ Para rodar o jogo, siga os seguintes passos:
     #### 4. Determinação do Vetor da Aceleração   $Vetor Aceleracão = {|a|}*{Vetor Normalizado}$
     #### 5. Cálculo da Aceleração Resultante $Aceleracao Resultante += Vetor Aceleracão$
     Primeiramente, calculamos a distância entre o tiro e o planeta em questão. Em seguida, calculamos a aceleração que o planeta deve exercer sobre o tiro utilizando $|a| = \frac{c}{d^2}$, onde $c$ é uma constante e $d$ é a distância entre os dois corpos. Para obter a direção da força gravitacional, criamos um vetor através da diferenca entre as coordenadas do planeta e do tiro e assim normalizamos ele para que tenha comprimento igual a 1. Por fim, multiplicamos esse vetor normalizado pela aceleração calculada para criar um vetor com magnitude igual a essa aceleração e então repetimos este cálculo para todos os planetas, resultando em uma aceleração resultante que é aplicada ao tiro
+
+
+## GIF do jogo
+<p align="center">
+  <img src="imagens/gif_jogo.gif">
+</p>
