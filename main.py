@@ -9,9 +9,9 @@ from funcoes import *
 
 
 
-class Jogo:
+class Jogo: #Classe que gera o jogo
     def __init__(self):
-
+        # Define as variáveis do jogo
         self.sprites = pygame.sprite.Group()
         self.alvo = pygame.sprite.Group()
         self.planeta = pygame.sprite.Group()
@@ -22,36 +22,30 @@ class Jogo:
         self.fonte = assets["fonte_padrao"]
         self.fonte_titulo = pygame.font.Font(self.fonte, 32)
 
-        estrelas = Estrela(50)
+        estrelas = Estrela(50) # Gera 50 estrelas
         self.lista_estrelas = estrelas.gera_estrelas()
 
         coord_alvo = assets["coord_alvo_1"]
-        for i in range(len(coord_alvo)):
+        for i in range(len(coord_alvo)): # Cria um alvo nas coordenadas especificadas
             Alvo(self.sprites, self.alvo, coord_alvo[i][0], coord_alvo[i][1])
 
         coord_planeta = assets["coord_planetas_1"]
-        for i in range(len(coord_planeta)):
+        for i in range(len(coord_planeta)): # Cria um planeta nas coordenadas especificadas
             Planeta(self.sprites, self.planeta, coord_planeta[i][0], coord_planeta[i][1])
         
         self.sprites.add(self.jogador)
-
-        
         self.fonte = pygame.font.Font(assets["fonte_padrao"], 12)
-
         self.tela = "tela_inicial"
-
         self.flag_tiro = False
         self.vel = 1.0
         self.window = assets["window"]
-        self.game_loop()
-
         self.fonte_vel = pygame.font.Font(assets["fonte_padrao"],12)
         self.velocidade = f"{self.vel}"
         self.velocidade = self.velocidade.split("0")
+        self.game_loop()
             
     
     def recebe_eventos(self):
-
         velocidade = 400
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -66,17 +60,17 @@ class Jogo:
             if event.type == pygame.KEYUP and event.key == pygame.K_DOWN:
                 self.jogador.vel_y-=velocidade
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-                pos = pygame.mouse.get_pos()
+                pos = pygame.mouse.get_pos() #Atira apenas se o mouse estiver perto da nave onde a "mira" está
                 if pos[0] < 250 and pos[1] < self.jogador.rect.y + 200 and pos[1] > self.jogador.rect.y - 100:
                     Tiro(self.sprites, self.alvo, self.jogador, self.jogador.rect.x + 100, self.jogador.rect.y + 40, self.vel, self.planeta)
                     piu_piu = carregar_audio("musicas\_Piu Piu Disparo_ Efecto de Sonido.mp3")
                     reproduzir_audio(piu_piu, duracao=650)
 
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_e:
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_e: #Aumenta a velocidade do tiro
                 if self.vel < 3.0:
                     self.vel += 0.3           
             if event.type == pygame.KEYDOWN and event.key == pygame.K_q:
-                if self.vel >1.3 :
+                if self.vel >= 1 :
                     self.vel -= 0.3
         last_update(self)
         return "tela_jogo"
@@ -84,12 +78,8 @@ class Jogo:
     def inicializa(self):
         pygame.init()
         self.window = assets["window"]
-        pygame.display.set_caption("Jogo do Edu")
-        
-        
-        # musica = pygame.mixer.Sound("assets/snd/tgfcoder-FrozenJam-SeamlessLoop.ogg")
+        pygame.display.set_caption("Ovni Wars")
         if not(assets["musica_tocando"]):
-            # musica.play()
             assets["musica_tocando"] = True
         return self.window
     
@@ -97,19 +87,18 @@ class Jogo:
         self.window.fill((0,0,0))
         self.window.blit(assets["fundo"], (0,0))
 
-
         for cada_lista in self.lista_estrelas:
             pygame.draw.circle(self.window,(255,255,255), (cada_lista[0],cada_lista[1]), cada_lista[2])
 
+        #Mosta na tela o FPS
         w, h = pygame.display.get_surface().get_size()
         texto_fps = fps(self)
         self.window.blit(texto_fps,(w - 130,h - 20))
 
-        self.fonte_vel = pygame.font.Font(assets["fonte_padrao"],20)
-        self.velocidade = f"{self.vel}"
-        self.velocidade = self.velocidade.split("0")
-        contorno(self,f"velocidade do tiro: {self.velocidade[0]}0x",self.fonte_vel,(255,255,255),5,10,(0,0,0))
-       
+        # Mostra na tela o Multiplicador de velocidade do tiro
+        contorno(self,f"Multiplicador de velocidade: {self.velocidade[0]}0x",self.fonte_vel,(255,255,255),5,10,(0,0,0))
+
+       #Desenha a mira se o mouse estiver perto da nave
         pos = pygame.mouse.get_pos()
         if pos[0] < 250 and pos[1] < self.jogador.rect.y + 200 and pos[1] > self.jogador.rect.y - 100:  
             pygame.draw.line(self.window, (255,255,255), (self.jogador.rect.x + 80,self.jogador.rect.y +100), (pos[0], pos[1]))
@@ -142,20 +131,20 @@ class Jogo:
             tela_atual = telas[self.tela]
             tela_atual.desenha()
 
-class TelaJogo2:
-
+class TelaJogo2: #Classe que gera a segunda tela do jogo
     def __init__(self, window, tela):      
+        # Define as variáveis da tela 2
         self.sprites = pygame.sprite.Group()
         self.alvo = pygame.sprite.Group()
         self.planeta = pygame.sprite.Group()
        
-        estrelas = Estrela(50)
+        estrelas = Estrela(50) 
         self.lista_estrelas = estrelas.gera_estrelas()
 
         self.jogador = Jogador(self.alvo)
         self.sprites.add(self.jogador)
 
-        coord_alvo = assets["coord_alvo_2"]
+        coord_alvo = assets["coord_alvo_2"] 
         Alvo(self.sprites, self.alvo, coord_alvo[0][0], coord_alvo[0][1])
 
         coord_planeta = assets["coord_planetas_2"]
@@ -168,9 +157,12 @@ class TelaJogo2:
         self.vel = 1.0
         self.window = window 
 
+        self.fonte_vel = pygame.font.Font(assets["fonte_padrao"],20)
+        self.velocidade = f"{self.vel}"
+        self.velocidade = self.velocidade.split("0")
+
     def recebe_eventos(self):
         velocidade = 400
-
         for event in pygame.event.get():
             if event.type == pygame.QUIT or state["flag_tela2"] == False:
                 return "tela_over"
@@ -192,7 +184,7 @@ class TelaJogo2:
                 if self.vel < 3.0:
                     self.vel += 0.3             
             if event.type == pygame.KEYDOWN and event.key == pygame.K_q:
-                if self.vel >1.3 :
+                if self.vel >= 1 :
                     self.vel -= 0.3
 
         last_update(self)
@@ -202,12 +194,7 @@ class TelaJogo2:
         self.window.fill((0,0,0))
         self.window.blit(assets["fundo2"], (0,0))
 
-        self.fonte_vel = pygame.font.Font(assets["fonte_padrao"],20)
-        self.velocidade = f"{self.vel}"
-        self.velocidade = self.velocidade.split("0")
-
-        contorno(self,f"Velocidade do tiro: {self.velocidade[0]}0x",self.fonte_vel,(255,255,255),5,10,(0,0,0))
-
+        contorno(self,f"Multiplicador de velocidade: {self.velocidade[0]}0x",self.fonte_vel,(255,255,255),5,10,(0,0,0))
 
         for cada_lista in self.lista_estrelas:
             pygame.draw.circle(self.window,(255,255,255), (cada_lista[0],cada_lista[1]), cada_lista[2])
@@ -216,7 +203,6 @@ class TelaJogo2:
         texto_fps = fps(self)
         self.window.blit(texto_fps,(w - 130,h - 20))
         
-
         pos = pygame.mouse.get_pos()
         if pos[0] < 250 and pos[1] < self.jogador.rect.y + 200 and pos[1] > self.jogador.rect.y - 100:  
             pygame.draw.line(self.window, (255,255,255), (self.jogador.rect.x + 80,self.jogador.rect.y +100), (pos[0], pos[1]))
@@ -224,12 +210,12 @@ class TelaJogo2:
         self.sprites.draw(self.window)
         pygame.display.update()
 
-class TelaJogo3:
-    def __init__(self, window, tela):      
+class TelaJogo3: #Classe que gera a terceira tela do jogo
+    def __init__(self, window, tela):   
+        # Define as variáveis da tela 3   
         self.sprites = pygame.sprite.Group()
         self.alvo = pygame.sprite.Group()
         self.planeta = pygame.sprite.Group()
-
 
         estrelas = Estrela(50)
         self.lista_estrelas = estrelas.gera_estrelas()
@@ -242,9 +228,7 @@ class TelaJogo3:
 
         coord_planeta = assets["coord_planetas_3"]
         for i in range(len(coord_planeta)):
-            Planeta(self.sprites, self.planeta, coord_planeta[i][0], coord_planeta[i][1])
-
-        
+            Planeta(self.sprites, self.planeta, coord_planeta[i][0], coord_planeta[i][1])  
         
         self.fonte = pygame.font.Font(assets["fonte_padrao"], 12)
         self.tela = tela
@@ -253,9 +237,12 @@ class TelaJogo3:
         self.vel = 1.0
         self.window = window 
 
+        self.fonte_vel = pygame.font.Font(assets["fonte_padrao"],20)
+        self.velocidade = f"{self.vel}"
+        self.velocidade = self.velocidade.split("0")
+
     def recebe_eventos(self):
         velocidade = 400
-
         for event in pygame.event.get():
             if event.type == pygame.QUIT or state["flag_tela3"] == False:
                 return "tela_over"
@@ -277,9 +264,8 @@ class TelaJogo3:
                 if self.vel < 3.0:
                     self.vel += 0.3             
             if event.type == pygame.KEYDOWN and event.key == pygame.K_q:
-                if self.vel >1.3 :
+                if self.vel >= 1 :
                     self.vel -= 0.3
-
         last_update(self)
         return "tela_jogo3"
 
@@ -287,10 +273,7 @@ class TelaJogo3:
         self.window.fill((0,0,0))
         self.window.blit(assets["fundo3"], (0,0))
 
-        self.fonte_vel = pygame.font.Font(assets["fonte_padrao"],20)
-        self.velocidade = f"{self.vel}"
-        self.velocidade = self.velocidade.split("0")
-        contorno(self,f"Velocidade do tiro: {self.velocidade[0]}0x",self.fonte_vel,(255,255,255),5,10,(0,0,0))
+        contorno(self,f"Multiplicador de velocidade: {self.velocidade[0]}0x",self.fonte_vel,(255,255,255),5,10,(0,0,0))
 
         for cada_lista in self.lista_estrelas:
             pygame.draw.circle(self.window,(255,255,255), (cada_lista[0],cada_lista[1]), cada_lista[2])
@@ -306,13 +289,13 @@ class TelaJogo3:
         self.sprites.draw(self.window)
         pygame.display.update()
 
-class TelaJogo4:
-    def __init__(self, window, tela):      
+class TelaJogo4: #Classe que gera a quarta tela do jogo
+    def __init__(self, window, tela):
+        # Define as variáveis da tela 4      
         self.sprites = pygame.sprite.Group()
         self.alvo = pygame.sprite.Group()
         self.planeta = pygame.sprite.Group()
 
-        
         estrelas = Estrela(50)
         self.lista_estrelas = estrelas.gera_estrelas()
 
@@ -326,8 +309,6 @@ class TelaJogo4:
         for i in range(len(coord_planeta)):
             Planeta(self.sprites, self.planeta, coord_planeta[i][0], coord_planeta[i][1])
 
-        
-        
         self.fonte = pygame.font.Font(assets["fonte_padrao"], 12)
         self.tela = tela
         
@@ -337,7 +318,6 @@ class TelaJogo4:
 
     def recebe_eventos(self):
         velocidade = 400
-
         for event in pygame.event.get():
             if event.type == pygame.QUIT or state["flag_tela4"] == False:
                 pygame.mixer.stop() 
@@ -362,9 +342,8 @@ class TelaJogo4:
                 if self.vel < 3.0:
                     self.vel += 0.3             
             if event.type == pygame.KEYDOWN and event.key == pygame.K_q:
-                if self.vel >1.3 :
+                if self.vel >= 1 :
                     self.vel -= 0.3
-
         last_update(self)
         return "tela_jogo4"
 
@@ -375,9 +354,7 @@ class TelaJogo4:
         self.fonte_vel = pygame.font.Font(assets["fonte_padrao"],20)
         self.velocidade = f"{self.vel}"
         self.velocidade = self.velocidade.split("0")
-        contorno(self,f"Velocidade do tiro: {self.velocidade[0]}0x",self.fonte_vel,(255,255,255),5,10,(0,0,0))
-
-
+        contorno(self,f"Multiplicador de velocidade: {self.velocidade[0]}0x",self.fonte_vel,(255,255,255),5,10,(0,0,0))
 
         for cada_lista in self.lista_estrelas:
             pygame.draw.circle(self.window,(255,255,255), (cada_lista[0],cada_lista[1]), cada_lista[2])
@@ -403,21 +380,17 @@ class Jogador(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = self.rect.width / 5
         self.rect.y = 480 - self.rect.height
-
         self.vel_x = 0
         self.vel_y = 0
         
-
     def update(self, delta_t):
-        # Obtém a posição do mouse
-        mouse_pos = pygame.mouse.get_pos()
-        # Calcula o ângulo da nave
+        #Calcula o ângulo da nave em relação ao mouse e rotaciona a imagem
+        mouse_pos = pygame.mouse.get_pos() 
         self.angle = math.atan2(mouse_pos[1] - self.rect.centery, mouse_pos[0] - self.rect.centerx)
-        # Rotaciona a nave
         self.image = pygame.transform.rotate(self.image_original, math.degrees(-self.angle))
-        # Obtém o retângulo da imagem
         self.rect = self.image.get_rect(center=self.rect.center)
 
+        #Nave pode andar para cima e para baixo
         self.rect.y = (self.rect.y + self.vel_y*delta_t)
         if self.rect.y + self.rect.height >= 600:
             self.rect.y = 600 - self.rect.height
@@ -428,8 +401,9 @@ class Jogador(pygame.sprite.Sprite):
 class Planeta(pygame.sprite.Sprite):
     def __init__(self, sprites, planeta,  x, y):
         pygame.sprite.Sprite.__init__(self)
+        # Define as variáveis do planeta
         imagens = [assets["img_planeta1"], assets["img_planeta2"], assets["img_planeta3"], assets["img_planeta4"]]
-        self.image = imagens[randint(0,3)]
+        self.image = imagens[randint(0,3)] # Escolhe uma imagem de forma aleatória
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
@@ -439,19 +413,17 @@ class Planeta(pygame.sprite.Sprite):
 class Tiro(pygame.sprite.Sprite):
     def __init__(self, sprites, alvo, jogador, x, y, vel, planeta):
         super().__init__()
+        # Define as variáveis do tiro
         self.velo = vel
         self.planetas = planeta
         self.alvo = alvo
-
         self.original_image = assets["img_tiro"]
         self.image = self.original_image
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
         self.velocidade = np.array([0, 0])
-        self.initial_v = state["initial_vel"]
         self.flag_tiro = True
-        
         sprites.add(self)
         self.sprites = sprites
 
@@ -460,70 +432,68 @@ class Tiro(pygame.sprite.Sprite):
             posicao_mouse = pygame.mouse.get_pos()
             posicao_mouse = np.array([posicao_mouse[0], posicao_mouse[1]])
             posicao_atual = np.array([self.rect.x, self.rect.y])
-            velocidade = posicao_mouse - posicao_atual
-            mod = np.linalg.norm(velocidade)
-            velocidade = velocidade / mod
-            self.velocidade = velocidade * 4
+            vetor = posicao_mouse - posicao_atual # Vetor que aponta para a posição do mouse
+            mod = np.linalg.norm(vetor) # Módulo do vetor
+            vetor_norm = vetor / mod # Vetor normalizado
+            self.velocidade = vetor_norm * 4 
             self.flag_tiro = False
       
-        C = 4000
+        C = 4000 # Constante de aceleração
         aceleracao_final = np.array([0.0, 0.0])  
         for planeta in self.planetas:
-
+            # Encontra o centro do planeta pois a imagem é 100x100
             centro_x = planeta.rect.x + 50
             centro_y = planeta.rect.y + 50
-
+            # Calcula a distância entre o tiro e o centro do planeta
             distancia = np.sqrt((self.rect.x - centro_x)**2 + (self.rect.y - centro_y)**2)
+            # Calcula a aceleração 
             aceleracao = C / (distancia**2)
-
+            # Calcula o vetor que aponta para o centro do planeta e normaliza
             vetor = np.array([centro_x - self.rect.x, centro_y - self.rect.y])
             vetor_normalizado = vetor / np.linalg.norm(vetor)
-
+            # Multiplica o vetor normalizado pela aceleração
             aceleracao*=vetor_normalizado
             aceleracao_final += aceleracao
 
-
-            if abs(centro_x - self.rect.x) < 50 and abs(self.rect.y - centro_y) < 50:
+            #Verifica se o tiro colidiu com o planeta
+            if abs(centro_x - self.rect.x) < 40 and abs(self.rect.y - centro_y) < 40:
                 self.kill()
-  
-        print(self.velocidade, aceleracao_final)
+        # Atualiza a velocidade e a posição do tiro
         self.velocidade += aceleracao_final * self.velo
-
         self.rect.x += self.velocidade[0] 
         self.rect.y += self.velocidade[1]
-        
 
-
-        if state["flag_tela2"] == False:
+        #Quando está na tela X,  a flag_telaX é setada para True
+        if state["flag_tela2"] == False: #Entra se está na tela_jogo
             lista = pygame.sprite.spritecollide(self, self.alvo, True)
-            for alvo in lista:
+            for alvo in lista:#Verifica se o tiro colidiu com o alvo
                 self.sprites.remove(self)
                 state["flag_tela2"] = True
-        elif state["flag_tela3"] == False:
+        elif state["flag_tela3"] == False: #Entra se está na tela_jogo2
             lista = pygame.sprite.spritecollide(self, self.alvo, True)
             for alvo in lista:
                 self.sprites.remove(self)
                 state["flag_tela3"] = True
-        elif state["flag_tela4"] == False:
+        elif state["flag_tela4"] == False: #Entra se está na tela_jogo3
             lista = pygame.sprite.spritecollide(self, self.alvo, True)
             for alvo in lista:
                 self.sprites.remove(self)
                 state["flag_tela4"] = True
-        else:
+        else: #Entra se está na tela_jogo4
             lista = pygame.sprite.spritecollide(self, self.alvo, True)
             for alvo in lista:
                 self.sprites.remove(self)
                 state["flag_tela4"] = False
                 state["flag_tela3"] = False
                 state["flag_tela2"] = False
-
-
+        #Se o tiro sair da tela, ele é removido
         if self.rect.x > 790 or self.rect.x < 0 or self.rect.y > 600 or self.rect.y < 0:
             self.kill()
 
-class Alvo(pygame.sprite.Sprite):
+class Alvo(pygame.sprite.Sprite): #Classe que gera o alvo
     def __init__(self, sprites, alvo, x, y):
         pygame.sprite.Sprite.__init__(self)
+        # Define as variáveis do alvo
         self.image = assets["img_alvo"]
         self.rect = self.image.get_rect()
         self.rect.x = x
@@ -531,7 +501,7 @@ class Alvo(pygame.sprite.Sprite):
         sprites.add(self)
         alvo.add(self)
 
-class Estrela:
+class Estrela: #Classe que gera as estrelas
     def __init__(self, quant_estrelas):
         self.quant_estrelas = quant_estrelas
     def gera_estrelas(self):
@@ -545,15 +515,15 @@ class Estrela:
         return estrelas
     
 
-class TelaInicial:
+class TelaInicial: #Classe que gera a tela inicial
     def __init__(self, window, tela):
+        # Define as variáveis da tela inicial
         pygame.init()
         self.window = window
         self.tela = tela
         self.musica_fundo = carregar_audio("musicas/fundo_tela_inicial.mp3")
         reproduzir_fundo(self.musica_fundo, loop = True)
         
-
     def recebe_eventos(self):
         for evento in pygame.event.get():
             if evento.type == pygame.QUIT:
@@ -596,8 +566,6 @@ class TelaInicial:
         contorno(self, "Mantenha o mouse", fonte_24,(255,255,255) ,430,460,(0,0,0))
         contorno(self,"perto da nave para ",fonte_24,(255,255,255), 430,485,(0,0,0))
         contorno(self,"mirar e atirar",fonte_24,(255,255,255), 430,510,(0,0,0))
-
-
 
         pygame.display.update()
 

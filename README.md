@@ -3,10 +3,10 @@
 # Projeto: jogo estilo "Angry Birds no espaço"
 
 ## Introdução
-Esse projeto tem como objetivo a criação de um jogo, para aplicar na pratica a manipulação de VETORES, conteudo apreendido na matéria de Algebrá Linear. O projeto foi desenvolvido por Eduardo Takei e Giovanny Russo. O jogo consiste em uma representação de como a força da gravidade age sobre corpos que estão passando por suas proximidades. 
+Esse projeto tem como objetivo a criação de um jogo para aplicar na pratica a manipulação de VETORES, conteudo apreendido na matéria de Algebrá Linear. O projeto foi desenvolvido por Eduardo Takei e Giovanny Russo. O jogo consiste em uma representação de como a força da gravidade age sobre corpos que estão passando por suas proximidades. 
 
 ## O Jogo
-    Você controlará uma nave espacial, com o objetivo de acertar o astronauta. Determinando a direção e depois atirando, passando por planetas e podendo ter a rota de seu tiro alterada pela gravidade desses planetas.
+    Você controlará uma nave espacial, com o objetivo de acertar o astronauta. Determinando a direção e depois atirando, o tiro passa por planetas e pode ter a rota alterada pela gravidade desses planetas.
 
 ### Como Jogar
 - Setas ↑ e ↓ :
@@ -45,7 +45,7 @@ Para rodar o jogo, siga os seguintes passos:
 
 ## Planetas 
 - Cada tela tem um número de planetas com posições fixas
-- As imagens dos planetas são aleatórias mas não implica na força de atração
+- As imagens dos planetas são aleatórias e não implicam na força da gravidade
 ### Cálculo da Gravidade
 
 - Para calcular a aceleração da gravidade que os planetas exercem sobre o tiro, foram seguidos os seguintes passos:
