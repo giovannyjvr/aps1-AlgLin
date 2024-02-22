@@ -9,13 +9,6 @@ from funcoes import *
 
 
 
-def last_update(self):
-        ultimo_tempo = state["last_updated"]
-        tempo = pygame.time.get_ticks()
-        delta_t = (tempo-ultimo_tempo)/1000
-        state["last_updated"] = tempo
-        self.sprites.update(delta_t)
-
 class Jogo:
     def __init__(self):
 

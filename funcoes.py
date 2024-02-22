@@ -34,6 +34,13 @@ def carregar_audio(caminho):
     except pygame.error as mensagem_erro:
         print("Erro ao carregar o som:", mensagem_erro)
         return None
+    
+def last_update(self):
+        ultimo_tempo = state["last_updated"]
+        tempo = pygame.time.get_ticks()
+        delta_t = (tempo-ultimo_tempo)/1000
+        state["last_updated"] = tempo
+        self.sprites.update(delta_t)
 
 def reproduzir_audio(audio, duracao=650):
     try:
