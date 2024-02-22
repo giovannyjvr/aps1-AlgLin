@@ -478,9 +478,6 @@ class Tiro(pygame.sprite.Sprite):
         for i in range(len(aceleracoes)):
                 ax += aceleracoes[i]*np.cos(angulos[i])/4
                 ay += aceleracoes[i]*np.sin(angulos[i])/4
-            
-            
-
         if ax > 0.7:
             ax = 0.7
         if ax < -0.7:
