@@ -340,6 +340,9 @@ class TelaJogo4:
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT or state["flag_tela4"] == False:
+                pygame.mixer.stop() 
+                self.musica_fundo = carregar_audio("musicas/fundo_win.mp3")
+                reproduzir_fundo(self.musica_fundo, loop = True)
                 return "tela_over"
             if event.type == pygame.KEYDOWN and event.key == pygame.K_UP:
                 self.jogador.vel_y-=velocidade
@@ -605,6 +608,7 @@ class TelaGameOver:
         pygame.init()
         self.window = window
         self.tela = tela
+        
 
     def recebe_eventos(self):
         for evento in pygame.event.get():
