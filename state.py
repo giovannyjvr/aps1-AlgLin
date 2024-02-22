@@ -9,5 +9,5 @@ state = {
     "flag_tela2": False,
     "flag_tela3": False,
     "flag_tela4": False,
-    "initial_vel": np.array([5, -5]),
+  
 }
