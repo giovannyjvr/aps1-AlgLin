@@ -39,9 +39,7 @@ class Jogo: #Classe que gera o jogo
         self.flag_tiro = False
         self.vel = 1.0
         self.window = assets["window"]
-        self.fonte_vel = pygame.font.Font(assets["fonte_padrao"],12)
-        self.velocidade = f"{self.vel}"
-        self.velocidade = self.velocidade.split("0")
+        self.fonte_vel = pygame.font.Font(assets["fonte_padrao"],20)
         self.game_loop()
             
     
@@ -65,12 +63,16 @@ class Jogo: #Classe que gera o jogo
                     Tiro(self.sprites, self.alvo, self.jogador, self.jogador.rect.x + 100, self.jogador.rect.y + 40, self.vel, self.planeta)
                     piu_piu = carregar_audio("musicas\_Piu Piu Disparo_ Efecto de Sonido.mp3")
                     reproduzir_audio(piu_piu, duracao=650)
-
             if event.type == pygame.KEYDOWN and event.key == pygame.K_e: #Aumenta a velocidade do tiro
                 if self.vel < 3.0:
-                    self.vel += 0.3           
+                    print("entrou")
+                    self.vel = self.vel + 0.3
+                    self.velocidade = f"{self.vel}".split("0")
+
+                    print( self.vel)          
             if event.type == pygame.KEYDOWN and event.key == pygame.K_q:
-                if self.vel >= 1 :
+                if self.vel >= 1.3 :
+                    self.velocidade = f"{self.vel}".split("0")
                     self.vel -= 0.3
         last_update(self)
         return "tela_jogo"
@@ -96,6 +98,8 @@ class Jogo: #Classe que gera o jogo
         self.window.blit(texto_fps,(w - 130,h - 20))
 
         # Mostra na tela o Multiplicador de velocidade do tiro
+        self.velocidade = f"{self.vel}".split("0")
+
         contorno(self,f"Multiplicador de velocidade: {self.velocidade[0]}0x",self.fonte_vel,(255,255,255),5,10,(0,0,0))
 
        #Desenha a mira se o mouse estiver perto da nave
@@ -158,8 +162,7 @@ class TelaJogo2: #Classe que gera a segunda tela do jogo
         self.window = window 
 
         self.fonte_vel = pygame.font.Font(assets["fonte_padrao"],20)
-        self.velocidade = f"{self.vel}"
-        self.velocidade = self.velocidade.split("0")
+       
 
     def recebe_eventos(self):
         velocidade = 400
@@ -184,7 +187,7 @@ class TelaJogo2: #Classe que gera a segunda tela do jogo
                 if self.vel < 3.0:
                     self.vel += 0.3             
             if event.type == pygame.KEYDOWN and event.key == pygame.K_q:
-                if self.vel >= 1 :
+                if self.vel >= 1.3 :
                     self.vel -= 0.3
 
         last_update(self)
@@ -194,6 +197,7 @@ class TelaJogo2: #Classe que gera a segunda tela do jogo
         self.window.fill((0,0,0))
         self.window.blit(assets["fundo2"], (0,0))
 
+        self.velocidade = f"{self.vel}".split("0")
         contorno(self,f"Multiplicador de velocidade: {self.velocidade[0]}0x",self.fonte_vel,(255,255,255),5,10,(0,0,0))
 
         for cada_lista in self.lista_estrelas:
@@ -238,8 +242,6 @@ class TelaJogo3: #Classe que gera a terceira tela do jogo
         self.window = window 
 
         self.fonte_vel = pygame.font.Font(assets["fonte_padrao"],20)
-        self.velocidade = f"{self.vel}"
-        self.velocidade = self.velocidade.split("0")
 
     def recebe_eventos(self):
         velocidade = 400
@@ -264,7 +266,7 @@ class TelaJogo3: #Classe que gera a terceira tela do jogo
                 if self.vel < 3.0:
                     self.vel += 0.3             
             if event.type == pygame.KEYDOWN and event.key == pygame.K_q:
-                if self.vel >= 1 :
+                if self.vel >= 1.3 :
                     self.vel -= 0.3
         last_update(self)
         return "tela_jogo3"
@@ -273,6 +275,8 @@ class TelaJogo3: #Classe que gera a terceira tela do jogo
         self.window.fill((0,0,0))
         self.window.blit(assets["fundo3"], (0,0))
 
+
+        self.velocidade = f"{self.vel}".split("0")
         contorno(self,f"Multiplicador de velocidade: {self.velocidade[0]}0x",self.fonte_vel,(255,255,255),5,10,(0,0,0))
 
         for cada_lista in self.lista_estrelas:
@@ -342,7 +346,7 @@ class TelaJogo4: #Classe que gera a quarta tela do jogo
                 if self.vel < 3.0:
                     self.vel += 0.3             
             if event.type == pygame.KEYDOWN and event.key == pygame.K_q:
-                if self.vel >= 1 :
+                if self.vel >= 1.3 :
                     self.vel -= 0.3
         last_update(self)
         return "tela_jogo4"
@@ -352,8 +356,8 @@ class TelaJogo4: #Classe que gera a quarta tela do jogo
         self.window.blit(assets["fundo4"], (0,0))
 
         self.fonte_vel = pygame.font.Font(assets["fonte_padrao"],20)
-        self.velocidade = f"{self.vel}"
-        self.velocidade = self.velocidade.split("0")
+        self.velocidade = f"{self.vel}".split("0")
+
         contorno(self,f"Multiplicador de velocidade: {self.velocidade[0]}0x",self.fonte_vel,(255,255,255),5,10,(0,0,0))
 
         for cada_lista in self.lista_estrelas:
