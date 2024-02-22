@@ -486,11 +486,12 @@ class Tiro(pygame.sprite.Sprite):
             aceleracao*=vetor_normalizado
             aceleracao_final += aceleracao
 
+
             if abs(centro_x - self.rect.x) < 50 and abs(self.rect.y - centro_y) < 50:
                 self.kill()
   
         print(self.velocidade, aceleracao_final)
-        self.velocidade += aceleracao_final 
+        self.velocidade += aceleracao_final * self.velo
 
         self.rect.x += self.velocidade[0] 
         self.rect.y += self.velocidade[1]
