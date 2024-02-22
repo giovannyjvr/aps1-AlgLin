@@ -27,7 +27,7 @@ class Jogo:
         self.jogador = Jogador(self.alvo)
 
         self.fonte = assets["fonte_padrao"]
-        self.fonte_titulo = pygame.font.Font(self.fonte, 34)
+        self.fonte_titulo = pygame.font.Font(self.fonte, 32)
 
         estrelas = Estrela(50)
         self.lista_estrelas = estrelas.gera_estrelas()
@@ -59,7 +59,6 @@ class Jogo:
     
     def recebe_eventos(self):
 
-        contorno(self, self.vel,self.fonte_titulo, (255,255,255), 5,10,(0,0,0) )
         velocidade = 400
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -113,14 +112,14 @@ class Jogo:
         texto_fps = fps(self)
         self.window.blit(texto_fps,(w - 130,h - 20))
 
-        self.fonte_vel = pygame.font.Font(assets["fonte_padrao"],12)
+        self.fonte_vel = pygame.font.Font(assets["fonte_padrao"],20)
         self.velocidade = f"{self.vel}"
         self.velocidade = self.velocidade.split("0")
-        contorno(self,self.velocidade[0],self.fonte_vel,(255,255,255),5,10,(0,0,0))
+        contorno(self,f"velocidade do tiro: {self.velocidade[0]}0x",self.fonte_vel,(255,255,255),5,10,(0,0,0))
        
         pos = pygame.mouse.get_pos()
         if pos[0] < 250 and pos[1] < self.jogador.rect.y + 200 and pos[1] > self.jogador.rect.y - 100:  
-            pygame.draw.line(self.window, (255,255,255), (self.jogador.rect.x + 120,self.jogador.rect.y +60), (pos[0], pos[1]))
+            pygame.draw.line(self.window, (255,255,255), (self.jogador.rect.x + 80,self.jogador.rect.y +100), (pos[0], pos[1]))
         
         self.sprites.draw(self.window)
         pygame.display.update()
@@ -173,7 +172,7 @@ class TelaJogo2:
         self.fonte = pygame.font.Font(assets["fonte_padrao"], 12)
         self.tela = tela
         self.flag_tiro = False
-        self.vel = 1
+        self.vel = 1.0
         self.window = window 
 
     def recebe_eventos(self):
@@ -210,11 +209,11 @@ class TelaJogo2:
         self.window.fill((0,0,0))
         self.window.blit(assets["fundo2"], (0,0))
 
-        self.fonte_vel = pygame.font.Font(assets["fonte_padrao"],12)
+        self.fonte_vel = pygame.font.Font(assets["fonte_padrao"],20)
         self.velocidade = f"{self.vel}"
         self.velocidade = self.velocidade.split("0")
 
-        contorno(self,self.velocidade[0],self.fonte_vel,(255,255,255),5,10,(0,0,0))
+        contorno(self,f"Velocidade do tiro: {self.velocidade[0]}0x",self.fonte_vel,(255,255,255),5,10,(0,0,0))
 
 
         for cada_lista in self.lista_estrelas:
@@ -227,7 +226,7 @@ class TelaJogo2:
 
         pos = pygame.mouse.get_pos()
         if pos[0] < 250 and pos[1] < self.jogador.rect.y + 200 and pos[1] > self.jogador.rect.y - 100:  
-            pygame.draw.line(self.window, (255,255,255), (self.jogador.rect.x + 120,self.jogador.rect.y +60), (pos[0], pos[1]))
+            pygame.draw.line(self.window, (255,255,255), (self.jogador.rect.x + 80,self.jogador.rect.y +100), (pos[0], pos[1]))
         
         self.sprites.draw(self.window)
         pygame.display.update()
@@ -258,7 +257,7 @@ class TelaJogo3:
         self.tela = tela
         
         self.flag_tiro = False
-        self.vel = 1
+        self.vel = 1.0
         self.window = window 
 
     def recebe_eventos(self):
@@ -295,10 +294,10 @@ class TelaJogo3:
         self.window.fill((0,0,0))
         self.window.blit(assets["fundo3"], (0,0))
 
-        self.fonte_vel = pygame.font.Font(assets["fonte_padrao"],12)
+        self.fonte_vel = pygame.font.Font(assets["fonte_padrao"],20)
         self.velocidade = f"{self.vel}"
         self.velocidade = self.velocidade.split("0")
-        contorno(self,self.velocidade[0],self.fonte_vel,(255,255,255),5,10,(0,0,0))
+        contorno(self,f"Velocidade do tiro: {self.velocidade[0]}0x",self.fonte_vel,(255,255,255),5,10,(0,0,0))
 
         for cada_lista in self.lista_estrelas:
             pygame.draw.circle(self.window,(255,255,255), (cada_lista[0],cada_lista[1]), cada_lista[2])
@@ -309,7 +308,7 @@ class TelaJogo3:
 
         pos = pygame.mouse.get_pos()
         if pos[0] < 250 and pos[1] < self.jogador.rect.y + 200 and pos[1] > self.jogador.rect.y - 100:  
-            pygame.draw.line(self.window, (255,255,255), (self.jogador.rect.x + 120,self.jogador.rect.y +60), (pos[0], pos[1]))
+            pygame.draw.line(self.window, (255,255,255), (self.jogador.rect.x + 80,self.jogador.rect.y +100), (pos[0], pos[1]))
         
         self.sprites.draw(self.window)
         pygame.display.update()
@@ -340,7 +339,7 @@ class TelaJogo4:
         self.tela = tela
         
         self.flag_tiro = False
-        self.vel = 1
+        self.vel = 1.0
         self.window = window 
 
     def recebe_eventos(self):
@@ -377,10 +376,10 @@ class TelaJogo4:
         self.window.fill((0,0,0))
         self.window.blit(assets["fundo4"], (0,0))
 
-        self.fonte_vel = pygame.font.Font(assets["fonte_padrao"],12)
+        self.fonte_vel = pygame.font.Font(assets["fonte_padrao"],20)
         self.velocidade = f"{self.vel}"
         self.velocidade = self.velocidade.split("0")
-        contorno(self,self.velocidade[0],self.fonte_vel,(255,255,255),5,10,(0,0,0))
+        contorno(self,f"Velocidade do tiro: {self.velocidade[0]}0x",self.fonte_vel,(255,255,255),5,10,(0,0,0))
 
 
 
@@ -393,7 +392,7 @@ class TelaJogo4:
 
         pos = pygame.mouse.get_pos()
         if pos[0] < 250 and pos[1] < self.jogador.rect.y + 200 and pos[1] > self.jogador.rect.y - 100:  
-            pygame.draw.line(self.window, (255,255,255), (self.jogador.rect.x + 120,self.jogador.rect.y +60), (pos[0], pos[1]))
+            pygame.draw.line(self.window, (255,255,255), (self.jogador.rect.x + 80,self.jogador.rect.y +100), (pos[0], pos[1]))
         
         self.sprites.draw(self.window)
         pygame.display.update()
@@ -414,6 +413,14 @@ class Jogador(pygame.sprite.Sprite):
         
 
     def update(self, delta_t):
+        # Obtém a posição do mouse
+        mouse_pos = pygame.mouse.get_pos()
+        # Calcula o ângulo da nave
+        self.angle = math.atan2(mouse_pos[1] - self.rect.centery, mouse_pos[0] - self.rect.centerx)
+        # Rotaciona a nave
+        self.image = pygame.transform.rotate(self.image_original, math.degrees(-self.angle))
+        # Obtém o retângulo da imagem
+        self.rect = self.image.get_rect(center=self.rect.center)
 
         self.rect.y = (self.rect.y + self.vel_y*delta_t)
         if self.rect.y + self.rect.height >= 600:
@@ -492,7 +499,6 @@ class Tiro(pygame.sprite.Sprite):
 
         self.rect.x += self.initial_v[0] * self.velo
         self.rect.y += self.initial_v[1] * self.velo
-        print(self.initial_v* self.velo)
         if state["flag_tela2"] == False:
             lista = pygame.sprite.spritecollide(self, self.alvo, True)
             for alvo in lista:
@@ -557,7 +563,7 @@ class TelaInicial:
         for evento in pygame.event.get():
             if evento.type == pygame.QUIT:
                 return False
-            if evento.type == pygame.KEYDOWN:
+            if evento.type == pygame.KEYDOWN and evento.key == pygame.K_SPACE:
                 pygame.mixer.stop() 
                 self.musica_fundo_jogo = carregar_audio("musicas/fundo_jogo.mp3")
                 reproduzir_fundo(self.musica_fundo_jogo, loop = True)
@@ -568,23 +574,35 @@ class TelaInicial:
         fonte = assets["fonte_padrao"]
         fonte_titulo = pygame.font.Font(fonte, 60)
         fonte_24 = pygame.font.Font(fonte, 24)
+        fonte_30 = pygame.font.Font(fonte, 30)
         fonte = pygame.font.Font(fonte, 40)
 
         fundo = assets["fundo_inicial"]
         self.window.blit(fundo, (0,0))
 
-        contorno(self, "Ovni Wars", fonte_titulo, (0,0,139),300,50, (255,255,255))
+        contorno(self, "Ovni Wars", fonte_titulo, (0,0,139),250,75, (255,255,255))
 
-        contorno(self, "Aperte 'Espaço'", fonte, (255,0,0),265,201,(0,0,0))
-        contorno(self, "para iniciar", fonte, (255,0,0),270,241,(0,0,0))
+        contorno(self, "Aperte (BARRA)", fonte, (255,0,0),250,201,(0,0,0))
+        contorno(self, "para iniciar", fonte, (255,0,0),285,241,(0,0,0))
 
-        contorno(self, "Instruções:", fonte_24, (255,255,0),5,360,(0,0,0))
-        contorno(self, "(Q) para diminuir a", fonte_24,(255,255,255) ,5,400,(0,0,0))
-        contorno(self, "velocidade do tiro", fonte_24,(255,255,255) ,5,425,(0,0,0))
-        contorno(self,"(E) para aumentar a",fonte_24,(255,255,255), 5,460,(0,0,0))
-        contorno(self,"velocidade do tiro",fonte_24,(255,255,255), 5,485,(0,0,0))
-        contorno(self,"(CIMA)(BAIXO) para ",fonte_24,(255,255,255), 5,525,(0,0,0))
-        contorno(self,"mexer a nave",fonte_24,(255,255,255), 5,550,(0,0,0))
+        contorno(self, "Instruções:", fonte_30, (255,255,0),330,360,(0,0,0))
+
+        contorno(self, "(Q) para diminuir a", fonte_24,(255,255,255) ,160,400,(0,0,0))
+        contorno(self, "velocidade do tiro", fonte_24,(255,255,255) ,160,425,(0,0,0))
+        contorno(self,"(E) para aumentar a",fonte_24,(255,255,255),160,460,(0,0,0))
+        contorno(self,"velocidade do tiro",fonte_24,(255,255,255),160,485,(0,0,0))
+        contorno(self,"(CIMA)(BAIXO) para ",fonte_24,(255,255,255),160,525,(0,0,0))
+        contorno(self,"mexer a nave",fonte_24,(255,255,255),160,550,(0,0,0))
+        
+        pygame.draw.line(self.window, (255,255,255), (410,400), (410,600))
+
+        contorno(self,"Aperte (BARRA) para",fonte_24,(255,255,255), 430,400,(0,0,0))
+        contorno(self,"atirar",fonte_24,(255,255,255), 430,425,(0,0,0))
+        contorno(self, "Mantenha o mouse", fonte_24,(255,255,255) ,430,460,(0,0,0))
+        contorno(self,"perto da nave para ",fonte_24,(255,255,255), 430,485,(0,0,0))
+        contorno(self,"mirar e atirar",fonte_24,(255,255,255), 430,510,(0,0,0))
+
+
 
         pygame.display.update()
 
