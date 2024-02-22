@@ -461,27 +461,6 @@ class Tiro(pygame.sprite.Sprite):
             self.initial_v = nova_v
             self.flag_tiro = False
 
-        forca = np.array([0,0])
-        soma_no_x = 0
-        soma_no_y = 0
-
-        for planeta in self.planetas:
-            x = planeta.rect.x
-            y = planeta.rect.y
-            
-            tamanho_vetor_horizontal = x - self.rect.x
-            tamanho_vetor_vertical = y - self.rect.y
-            vetor = np.array([tamanho_vetor_horizontal, tamanho_vetor_vertical])
-            vetor  = vetor / np.linalg.norm(vetor)
-            forca = vetor*(5000/ (tamanho_vetor_horizontal**2 + tamanho_vetor_vertical**2)**0.5)
-            soma_no_x += forca[0]
-            soma_no_y += forca[1]
-        
-
-        self.rect.x += (self.initial_v[0] + soma_no_x/50) * self.velo
-        self.rect.y += (self.initial_v[1] + soma_no_y/50) *  self.velo 
-
-        
         C = 4000
         aceleracoes = []
         angulos = []
@@ -513,14 +492,6 @@ class Tiro(pygame.sprite.Sprite):
         
         self.initial_v += np.array([ax, ay])
         
-        if self.initial_v[0] > 2.3:
-            self.initial_v[0] = 2.3
-        if self.initial_v[0] < -2.3:
-            self.initial_v[0] = -2.3
-        if self.initial_v[1] > 2.3:
-            self.initial_v[1] = 2.3
-        if self.initial_v[1] < -2.3:
-            self.initial_v[1] = -2.3
 
         self.rect.x += self.initial_v[0] * self.velo
         self.rect.y += self.initial_v[1] * self.velo
