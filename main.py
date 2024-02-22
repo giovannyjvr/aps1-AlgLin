@@ -119,6 +119,7 @@ class Jogo:
         }
 
         tela_atual = telas[self.tela]
+        
         while True:
             self.tela = tela_atual.recebe_eventos()
             if self.tela == False:
@@ -269,7 +270,7 @@ class TelaJogo3:
 
     def desenha(self):
         self.window.fill((0,0,0))
-        self.window.blit(assets["fundo2"], (0,0))
+        self.window.blit(assets["fundo3"], (0,0))
 
         for cada_lista in self.lista_estrelas:
             pygame.draw.circle(self.window,(255,255,255), (cada_lista[0],cada_lista[1]), cada_lista[2])
@@ -345,7 +346,7 @@ class TelaJogo4:
 
     def desenha(self):
         self.window.fill((0,0,0))
-        self.window.blit(assets["fundo2"], (0,0))
+        self.window.blit(assets["fundo4"], (0,0))
 
         for cada_lista in self.lista_estrelas:
             pygame.draw.circle(self.window,(255,255,255), (cada_lista[0],cada_lista[1]), cada_lista[2])
@@ -388,10 +389,8 @@ class Jogador(pygame.sprite.Sprite):
 class Planeta(pygame.sprite.Sprite):
     def __init__(self, sprites, planeta,  x, y):
         pygame.sprite.Sprite.__init__(self)
-        image1 = assets["img_planeta1"]
-        image2 = assets["img_planeta2"]
-        imagens = [image1, image2]
-        self.image = imagens[randint(0,1)]
+        imagens = [assets["img_planeta1"], assets["img_planeta2"], assets["img_planeta3"], assets["img_planeta4"]]
+        self.image = imagens[randint(0,3)]
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
@@ -458,27 +457,38 @@ class Tiro(pygame.sprite.Sprite):
             angulo = np.arctan2(planeta.rect.y - self.rect.y, planeta.rect.x - self.rect.x)
             angulos.append(angulo)
             if abs(planeta.rect.x - self.rect.x) < 20 and abs(self.rect.y - planeta.rect.y) < 20:
-                print(abs(planeta.rect.x  - self.rect.x), abs(self.rect.y - planeta.rect.y))
                 self.kill()
         ax = 0
         ay = 0
         for i in range(len(aceleracoes)):
-            ax += aceleracoes[i]*np.cos(angulos[i])/4
-            ay += aceleracoes[i]*np.sin(angulos[i])/4
+                ax += aceleracoes[i]*np.cos(angulos[i])/4
+                ay += aceleracoes[i]*np.sin(angulos[i])/4
+            
+            
 
-        if ax > 1:
-            ax = 1
-        if ax < -1:
-            ax = -1
-        if ay > 1:
-            ay = 1
-        if ay < -1:
-            ay = -1
+        if ax > 0.7:
+            ax = 0.7
+        if ax < -0.7:
+            ax = -0.7
+        if ay > 0.7:
+            ay = 0.7
+        if ay < -0.7:
+            ay = -0.7
         
         self.initial_v += np.array([ax, ay])
+        
+        if self.initial_v[0] > 2.3:
+            self.initial_v[0] = 2.3
+        if self.initial_v[0] < -2.3:
+            self.initial_v[0] = -2.3
+        if self.initial_v[1] > 2.3:
+            self.initial_v[1] = 2.3
+        if self.initial_v[1] < -2.3:
+            self.initial_v[1] = -2.3
+
         self.rect.x += self.initial_v[0] * self.velo
         self.rect.y += self.initial_v[1] * self.velo
-
+        print(self.initial_v* self.velo)
         if state["flag_tela2"] == False:
             lista = pygame.sprite.spritecollide(self, self.alvo, True)
             for alvo in lista:
@@ -489,12 +499,19 @@ class Tiro(pygame.sprite.Sprite):
             for alvo in lista:
                 self.sprites.remove(self)
                 state["flag_tela3"] = True
-        else:
+        elif state["flag_tela4"] == False:
             lista = pygame.sprite.spritecollide(self, self.alvo, True)
             for alvo in lista:
                 self.sprites.remove(self)
                 state["flag_tela4"] = True
-                
+        else:
+            lista = pygame.sprite.spritecollide(self, self.alvo, True)
+            for alvo in lista:
+                self.sprites.remove(self)
+                state["flag_tela4"] = False
+                state["flag_tela3"] = False
+                state["flag_tela2"] = False
+
 
         if self.rect.x > 790 or self.rect.x < 0 or self.rect.y > 600 or self.rect.y < 0:
             self.kill()
@@ -579,18 +596,19 @@ class TelaGameOver:
         return "tela_over"
     
     def desenha(self):
-        fonte_geral = assets["fonte"]
-        fonte = pygame.font.Font(fonte_geral, 44)
-        fonte2 = pygame.font.Font(fonte_geral, 24)
+        img = pygame.image.load("imagens/fundo_win.png")
+        img = pygame.transform.scale(img, (800,600))
+        self.window.blit(img, (0,0))
 
-        fundo = assets["fundo_final"]
-        self.window.blit(fundo, (0,0))
-        imprime(self,"Você perdeu",fonte,(255,255,255), 290, 50)
-        textinho = "testandoooooo"
-        imprime(self,textinho,fonte2,(0,0,255), 20, 40)
-        self.texto = fonte2.render("Sua pontuação foi: ", True, (255,255,0))
-        self.window.blit(self.texto, (100, 130))
-        self.texto = fonte2.render("ZZZ", True, (255,0,0))
-        self.window.blit(self.texto, (100, 160))
+        # Renderiza o texto como uma superfície
+        win = pygame.image.load("imagens/win.png")
+        alvo = assets["img_alvo"]
+        alvo = pygame.transform.scale(alvo, (230,230))
+        
+        # Define a posição onde o texto será desenhado
+        posicao = (800/2 - 300, 600/2 - 125)
+        # Desenha o texto na janela
+        self.window.blit(win, posicao)
+        self.window.blit(alvo, (450, 600/2 - 100))
         pygame.display.update()
 
