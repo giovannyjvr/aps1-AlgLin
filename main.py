@@ -70,15 +70,18 @@ class Jogo: #Classe que gera o jogo
                 if self.vel < 3.0:
                     self.vel += 0.3           
             if event.type == pygame.KEYDOWN and event.key == pygame.K_q:
-                if self.vel >= 1 :
+                if self.vel >= 1:
                     self.vel -= 0.3
         last_update(self)
         return "tela_jogo"
 
     def inicializa(self):
         pygame.init()
+        # Inicializa a janela
         self.window = assets["window"]
+        # Define o título da janela
         pygame.display.set_caption("Ovni Wars")
+
         if not(assets["musica_tocando"]):
             assets["musica_tocando"] = True
         return self.window
@@ -101,12 +104,18 @@ class Jogo: #Classe que gera o jogo
        #Desenha a mira se o mouse estiver perto da nave
         pos = pygame.mouse.get_pos()
         if pos[0] < 250 and pos[1] < self.jogador.rect.y + 200 and pos[1] > self.jogador.rect.y - 100:  
-            pygame.draw.line(self.window, (255,255,255), (self.jogador.rect.x + 80,self.jogador.rect.y +100), (pos[0], pos[1]))
+            mouse_pos = pygame.mouse.get_pos() 
+            y_jogador = self.jogador.rect.centery
+            if mouse_pos[1] < y_jogador:
+                pygame.draw.line(self.window, (255,255,255), (self.jogador.rect.x + 80,self.jogador.rect.y +85.5), (pos[0], pos[1]))
+            else:
+                pygame.draw.line(self.window, (255,255,255), (self.jogador.rect.x + 80,self.jogador.rect.y +86.5), (pos[0], pos[1]))
         
         self.sprites.draw(self.window)
         pygame.display.update()
     
-    def game_loop(self):
+    def game_loop(self): #Loop do jogo
+        # Dicionário de telas
         telas = {
             "tela_inicial": TelaInicial(self.window, self.tela),
             "tela_jogo": self,
@@ -117,8 +126,7 @@ class Jogo: #Classe que gera o jogo
         }
 
         tela_atual = telas[self.tela]
-        
-        while True:
+        while True: 
             self.tela = tela_atual.recebe_eventos()
             if self.tela == False:
                 break
@@ -128,6 +136,7 @@ class Jogo: #Classe que gera o jogo
                 self.tela = "tela_jogo3"
             if state["flag_tela4"]:
                 self.tela = "tela_jogo4"
+            # Atualiza a tela atual
             tela_atual = telas[self.tela]
             tela_atual.desenha()
 
@@ -205,8 +214,12 @@ class TelaJogo2: #Classe que gera a segunda tela do jogo
         
         pos = pygame.mouse.get_pos()
         if pos[0] < 250 and pos[1] < self.jogador.rect.y + 200 and pos[1] > self.jogador.rect.y - 100:  
-            pygame.draw.line(self.window, (255,255,255), (self.jogador.rect.x + 80,self.jogador.rect.y +100), (pos[0], pos[1]))
-        
+            mouse_pos = pygame.mouse.get_pos() 
+            y_jogador = self.jogador.rect.centery
+            if mouse_pos[1] < y_jogador:
+                pygame.draw.line(self.window, (255,255,255), (self.jogador.rect.x + 80,self.jogador.rect.y +85.5), (pos[0], pos[1]))
+            else:
+                pygame.draw.line(self.window, (255,255,255), (self.jogador.rect.x + 80,self.jogador.rect.y +86.5), (pos[0], pos[1]))
         self.sprites.draw(self.window)
         pygame.display.update()
 
@@ -284,8 +297,13 @@ class TelaJogo3: #Classe que gera a terceira tela do jogo
 
         pos = pygame.mouse.get_pos()
         if pos[0] < 250 and pos[1] < self.jogador.rect.y + 200 and pos[1] > self.jogador.rect.y - 100:  
-            pygame.draw.line(self.window, (255,255,255), (self.jogador.rect.x + 80,self.jogador.rect.y +100), (pos[0], pos[1]))
-        
+            mouse_pos = pygame.mouse.get_pos() 
+            y_jogador = self.jogador.rect.centery
+            if mouse_pos[1] < y_jogador:
+                pygame.draw.line(self.window, (255,255,255), (self.jogador.rect.x + 80,self.jogador.rect.y +85.5), (pos[0], pos[1]))
+            else:
+                pygame.draw.line(self.window, (255,255,255), (self.jogador.rect.x + 80,self.jogador.rect.y +86.5), (pos[0], pos[1]))
+
         self.sprites.draw(self.window)
         pygame.display.update()
 
@@ -362,8 +380,12 @@ class TelaJogo4: #Classe que gera a quarta tela do jogo
 
         pos = pygame.mouse.get_pos()
         if pos[0] < 250 and pos[1] < self.jogador.rect.y + 200 and pos[1] > self.jogador.rect.y - 100:  
-            pygame.draw.line(self.window, (255,255,255), (self.jogador.rect.x + 80,self.jogador.rect.y +100), (pos[0], pos[1]))
-        
+            mouse_pos = pygame.mouse.get_pos() 
+            y_jogador = self.jogador.rect.centery
+            if mouse_pos[1] < y_jogador:
+                pygame.draw.line(self.window, (255,255,255), (self.jogador.rect.x + 80,self.jogador.rect.y +85.5), (pos[0], pos[1]))
+            else:
+                pygame.draw.line(self.window, (255,255,255), (self.jogador.rect.x + 80,self.jogador.rect.y +86.5), (pos[0], pos[1]))
         self.sprites.draw(self.window)
         pygame.display.update()
 
@@ -578,20 +600,15 @@ class TelaGameOver:
         for evento in pygame.event.get():
             if evento.type == pygame.QUIT:
                 return False
-            # if evento.type == pygame.KEYDOWN:
-            #     return 
         return "tela_over"
     
     def desenha(self):
-        img = pygame.image.load("imagens/fundo_win.png")
-        img = pygame.transform.scale(img, (800,600))
+        img = assets["fundo_win"]
         self.window.blit(img, (0,0))
-
         # Renderiza o texto como uma superfície
-        win = pygame.image.load("imagens/win.png")
+        win = assets["win"]
         alvo = assets["img_alvo"]
         alvo = pygame.transform.scale(alvo, (230,230))
-        
         # Define a posição onde o texto será desenhado
         posicao = (800/2 - 300, 600/2 - 125)
         # Desenha o texto na janela

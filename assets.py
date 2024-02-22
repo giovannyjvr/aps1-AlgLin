@@ -9,6 +9,8 @@ assets = {
     "fundo2": pygame.transform.scale(pygame.image.load("imagens/fundo2.png"), (800,600)),
     "fundo3": pygame.transform.scale(pygame.image.load("imagens/fundo3.jpg"), (800,600)),
     "fundo4": pygame.transform.scale(pygame.image.load("imagens/fundo4.png"), (800,600)),
+    "fundo_win": pygame.transform.scale(pygame.image.load("imagens/fundo_win.png"), (800,600)),
+    "win": pygame.image.load("imagens/win.png"),
     "img_nave": pygame.transform.scale(pygame.image.load('imagens/navepft.png'), (100, 100)),
     "img_planeta1": pygame.transform.scale(pygame.image.load("imagens/planeta1.png"),(100,100)),
     "img_planeta2": pygame.transform.scale(pygame.image.load("imagens/planeta2.png"),(100,100)),
