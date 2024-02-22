@@ -452,6 +452,7 @@ class Tiro(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
+        self.velocidade = np.array([0, 0])
         self.initial_v = state["initial_vel"]
         self.flag_tiro = True
         
@@ -461,44 +462,41 @@ class Tiro(pygame.sprite.Sprite):
     def update(self, delta_t):
         if self.flag_tiro:
             posicao_mouse = pygame.mouse.get_pos()
+            posicao_mouse = np.array([posicao_mouse[0], posicao_mouse[1]])
             posicao_atual = np.array([self.rect.x, self.rect.y])
-            mod = np.linalg.norm(posicao_mouse - posicao_atual)
-            x = 1 / mod
-            nova_v = (posicao_mouse - posicao_atual) * x * 2.5
-            self.initial_v = nova_v
+            velocidade = posicao_mouse - posicao_atual
+            mod = np.linalg.norm(velocidade)
+            velocidade = velocidade / mod
+            self.velocidade = velocidade * 4
             self.flag_tiro = False
-
+      
         C = 4000
-        aceleracoes = []
-        angulos = []
-        
+        aceleracao_final = np.array([0.0, 0.0])  
         for planeta in self.planetas:
-            distancia = np.sqrt((self.rect.x - planeta.rect.x)**2 + (self.rect.y - planeta.rect.y)**2)
-            aceleracao = C / distancia**2
-            aceleracoes.append(aceleracao)
-            angulo = np.arctan2(planeta.rect.y - self.rect.y, planeta.rect.x - self.rect.x)
-            angulos.append(angulo)
-            if abs(planeta.rect.x - self.rect.x) < 20 and abs(self.rect.y - planeta.rect.y) < 20:
+
+            centro_x = planeta.rect.x + 50
+            centro_y = planeta.rect.y + 50
+
+            distancia = np.sqrt((self.rect.x - centro_x)**2 + (self.rect.y - centro_y)**2)
+            aceleracao = C / (distancia**2)
+
+            vetor = np.array([centro_x - self.rect.x, centro_y - self.rect.y])
+            vetor_normalizado = vetor / np.linalg.norm(vetor)
+
+            aceleracao*=vetor_normalizado
+            aceleracao_final += aceleracao
+
+            if abs(centro_x - self.rect.x) < 50 and abs(self.rect.y - centro_y) < 50:
                 self.kill()
-        ax = 0
-        ay = 0
-        for i in range(len(aceleracoes)):
-                ax += aceleracoes[i]*np.cos(angulos[i])/4
-                ay += aceleracoes[i]*np.sin(angulos[i])/4
-        if ax > 0.7:
-            ax = 0.7
-        if ax < -0.7:
-            ax = -0.7
-        if ay > 0.7:
-            ay = 0.7
-        if ay < -0.7:
-            ay = -0.7
-        
-        self.initial_v += np.array([ax, ay])
+  
+        print(self.velocidade, aceleracao_final)
+        self.velocidade += aceleracao_final 
+
+        self.rect.x += self.velocidade[0] 
+        self.rect.y += self.velocidade[1]
         
 
-        self.rect.x += self.initial_v[0] * self.velo
-        self.rect.y += self.initial_v[1] * self.velo
+
         if state["flag_tela2"] == False:
             lista = pygame.sprite.spritecollide(self, self.alvo, True)
             for alvo in lista:
