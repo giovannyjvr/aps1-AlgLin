@@ -566,24 +566,25 @@ class TelaInicial:
     
     def desenha(self):
         fonte = assets["fonte_padrao"]
-        fonte_titulo = pygame.font.Font(fonte, 34)
+        fonte_titulo = pygame.font.Font(fonte, 60)
         fonte_24 = pygame.font.Font(fonte, 24)
         fonte = pygame.font.Font(fonte, 40)
 
         fundo = assets["fundo_inicial"]
         self.window.blit(fundo, (0,0))
-        
-        contorno(self, "Ovni Wars", fonte_titulo, (0,0,0),300,50, (255,255,255))
+
+        contorno(self, "Ovni Wars", fonte_titulo, (0,0,139),300,50, (255,255,255))
 
         contorno(self, "Aperte 'Espaço'", fonte, (255,0,0),265,201,(0,0,0))
         contorno(self, "para iniciar", fonte, (255,0,0),270,241,(0,0,0))
-        contorno(self, "Instruções:", fonte_titulo, (255,255,0),5,360,(0,0,0))
-        contorno(self, "(Q) para diminuir a", fonte_24, (0,0,0),5,400,(255,255,255))
-        contorno(self, "velocidade do tiro", fonte_24, (0,0,0),5,425,(255,255,255))
-        contorno(self,"(E) para aumentar a",fonte_24,(0,0,0), 5,460,(255,255,255))
-        contorno(self,"velocidade do tiro",fonte_24,(0,0,0), 5,485,(255,255,255))
-        contorno(self,"(↑)(↓) para mexer",fonte_24,(0,0,0), 5,525,(255,255,255))
-        contorno(self,"a nave",fonte_24,(0,0,0), 5,550,(255,255,255))
+
+        contorno(self, "Instruções:", fonte_24, (255,255,0),5,360,(0,0,0))
+        contorno(self, "(Q) para diminuir a", fonte_24,(255,255,255) ,5,400,(0,0,0))
+        contorno(self, "velocidade do tiro", fonte_24,(255,255,255) ,5,425,(0,0,0))
+        contorno(self,"(E) para aumentar a",fonte_24,(255,255,255), 5,460,(0,0,0))
+        contorno(self,"velocidade do tiro",fonte_24,(255,255,255), 5,485,(0,0,0))
+        contorno(self,"(CIMA)(BAIXO) para ",fonte_24,(255,255,255), 5,525,(0,0,0))
+        contorno(self,"mexer a nave",fonte_24,(255,255,255), 5,550,(0,0,0))
 
         pygame.display.update()
 

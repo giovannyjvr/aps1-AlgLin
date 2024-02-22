@@ -3,7 +3,7 @@ import pygame
 assets = {
     "fonte_padrao": pygame.font.get_default_font(),
     "window": pygame.display.set_mode((800,600)),
-    "fundo_inicial": pygame.transform.scale(pygame.image.load("imagens/fundo_inicial.jpg"), (800,600)),
+    "fundo_inicial": pygame.transform.scale(pygame.image.load("imagens/fundo_inicio.jpg"), (800,600)),
     "fundo_final": pygame.transform.scale(pygame.image.load("imagens/fundo_final.jpg"), (800,600)),
     "fundo": pygame.transform.scale(pygame.image.load("imagens/fundo.png"), (800,600)),
     "fundo2": pygame.transform.scale(pygame.image.load("imagens/fundo2.png"), (800,600)),
