@@ -20,7 +20,7 @@ Esse projeto tem como objetivo a criação de um jogo para aplicar na pratica a 
 
 ## Intalação 
 Para rodar o jogo, siga os seguintes passos:
-### 1. Baixe o Zip
+### 1. Baixe o Zip ou clone o repositório
 - Nesse link https://github.com/giovannyjvr/aps1-AlgLin, abre a pagina github do projeto, no botão VERDE (Code),  abre a possibilidade de fazer o download por zip de todo o projeto. Portanto:
     ° Botão verde (Code)
     ° Local
@@ -59,5 +59,13 @@ Para rodar o jogo, siga os seguintes passos:
 
 ## GIF do jogo
 <p align="center">
-  <img src="imagens/gif_jogo.gif">
+  <img src="imagens/gif.gif">
 </p>
+
+## Informações extras
+O código do jogo está separado em 5 arquivos: jogo.py, main.py, funcoes.py, assets.py, state.py.  
+- jogo.py -> Classe Jogo que gera o jogo
+- assets.py -> Dicionário com as imagens, sons e outras variáveis do jogo
+- state.py -> Dicionário variáveis mais dinâmicas do jogo 
+- funcoes.py -> Funções que são usadas no jogo
+- main.py -> Arquivo principal que roda o jogo
