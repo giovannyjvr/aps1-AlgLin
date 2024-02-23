@@ -8,7 +8,6 @@ from state import *
 from funcoes import *
 
 
-
 class Jogo: #Classe que gera o jogo
     def __init__(self):
         # Define as variáveis do jogo
